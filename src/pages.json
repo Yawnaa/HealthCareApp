@@ -3,7 +3,6 @@
    "easycom": {
     "autoscan": true,
     "custom": {
-      // uni-ui 规则如下配置
       "^uni-(.*)": "@dcloudio/uni-ui/lib/uni-$1/uni-$1.vue"
     }
   },
@@ -34,10 +33,11 @@
       }
     },
     {
-      "path": "pages/category/category",
+      "path": "pages/test/test",
       "style": {
         "navigationBarTitleText": "健康自测",
-        "navigationBarTextStyle": "black"
+        "navigationBarTextStyle": "black",
+        "navigationBarBackgroundColor": "#ffffff"
       }
     },
     {
@@ -48,37 +48,73 @@
       }
     },
     {
+      "path": "pages/my/profile-edit",
+      "style": {
+        "navigationBarTitleText": "编辑个人信息",
+        "navigationBarTextStyle": "black",
+        "navigationBarBackgroundColor": "#ffffff"
+      }
+    },
+    {
       "path": "pages/check-in/breakfast",
       "style": {
         "navigationBarTitleText": "早餐打卡",
-        "navigationBarTextStyle": "black"
+        "navigationBarTextStyle": "black",
+        "navigationBarBackgroundColor": "#ffffff"
       }
     },
     {
       "path": "pages/check-in/lunch",
       "style": {
         "navigationBarTitleText": "午餐打卡",
-        "navigationBarTextStyle": "black"
+        "navigationBarTextStyle": "black",
+        "navigationBarBackgroundColor": "#ffffff"
       }
     },
     {
       "path": "pages/check-in/dinner",
       "style": {
         "navigationBarTitleText": "晚餐打卡",
-        "navigationBarTextStyle": "black"
+        "navigationBarTextStyle": "black",
+        "navigationBarBackgroundColor": "#ffffff"
       }
     },
     {
       "path": "pages/check-in/exercise",
       "style": {
         "navigationBarTitleText": "运动打卡",
-        "navigationBarTextStyle": "black"
+        "navigationBarTextStyle": "black",
+        "navigationBarBackgroundColor": "#ffffff"
       }
     },
     {
-      "path": "pages/my/profile-edit",
+      "path": "pages/questionnaire/chronic",
       "style": {
-        "navigationBarTitleText": "编辑个人信息",
+        "navigationBarTitleText": "慢性病风险评估",
+        "navigationBarTextStyle": "black",
+        "navigationBarBackgroundColor": "#ffffff"
+      }
+    },
+    {
+      "path": "pages/questionnaire/depression",
+      "style": {
+        "navigationBarTitleText": "抑郁自测",
+        "navigationBarTextStyle": "black",
+        "navigationBarBackgroundColor": "#ffffff"
+      }
+    },
+    {
+      "path": "pages/questionnaire/anxiety",
+      "style": {
+        "navigationBarTitleText": "焦虑自测",
+        "navigationBarTextStyle": "black",
+        "navigationBarBackgroundColor": "#ffffff"
+      }
+    },
+    {
+      "path": "pages/questionnaire/diabetes",
+      "style": {
+        "navigationBarTitleText": "糖尿病风险评估",
         "navigationBarTextStyle": "black",
         "navigationBarBackgroundColor": "#ffffff"
       }
@@ -86,7 +122,7 @@
   ],
   "globalStyle": {
     "navigationBarTextStyle": "black",
-    "navigationBarTitleText": "",
+    "navigationBarTitleText": "健康管理",
     "navigationBarBackgroundColor": "#F8F8F8",
     "backgroundColor": "#F8F8F8"
   },
@@ -104,10 +140,10 @@
         "selectedIconPath": "static/tabs/home_selected.png"
       },
       {
-        "text": "分类",
-        "pagePath": "pages/category/category",
-        "iconPath": "static/tabs/category_default.png",
-        "selectedIconPath": "static/tabs/category_selected.png"
+        "text": "健康自测",
+        "pagePath": "pages/test/test",
+        "iconPath": "static/tabs/test_default.png",
+        "selectedIconPath": "static/tabs/test_selected.png"
       },
       {
         "text": "购物车",

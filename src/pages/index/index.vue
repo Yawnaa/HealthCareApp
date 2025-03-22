@@ -42,35 +42,34 @@ const checkInList: CheckInItem[] = [
     title: '早餐打卡',
     icon: '/static/images/breakfast.png',
     checked: false,
-    path: 'pages/check-in/breakfast',
+    path: '/pages/check-in/breakfast',
   },
   {
     id: 'lunch',
     title: '午餐打卡',
     icon: '/static/images/lunch.png',
     checked: false,
-    path: 'pages/check-in/lunch',
+    path: '/pages/check-in/lunch',
   },
   {
     id: 'dinner',
     title: '晚餐打卡',
     icon: '/static/images/dinner.png',
     checked: false,
-    path: 'pages/check-in/dinner',
+    path: '/pages/check-in/dinner',
   },
   {
     id: 'exercise',
     title: '运动打卡',
     icon: '/static/images/exercise.png',
     checked: false,
-    path: 'pages/check-in/exercise',
+    path: '/pages/check-in/exercise',
   },
 ]
 
 // 处理打卡事件
 const handleCheckIn = (item: CheckInItem) => {
   console.log('开始导航到:', item.path)
-  // 跳转到对应页面
   uni.navigateTo({
     url: item.path,
     success: () => {
@@ -78,30 +77,10 @@ const handleCheckIn = (item: CheckInItem) => {
     },
     fail: (err) => {
       console.error('导航失败:', err)
-      // 尝试使用 redirectTo
-      uni.redirectTo({
-        url: item.path,
-        success: () => {
-          console.log('重定向成功')
-        },
-        fail: (redirectErr) => {
-          console.error('重定向也失败:', redirectErr)
-          // 最后尝试使用 reLaunch
-          uni.reLaunch({
-            url: item.path,
-            success: () => {
-              console.log('重启动成功')
-            },
-            fail: (reLaunchErr) => {
-              console.error('重启动也失败:', reLaunchErr)
-              uni.showToast({
-                title: '页面跳转失败',
-                icon: 'none',
-                duration: 2000,
-              })
-            },
-          })
-        },
+      uni.showToast({
+        title: '页面跳转失败',
+        icon: 'none',
+        duration: 2000,
       })
     },
   })
