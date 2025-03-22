@@ -1,0 +1,448 @@
+<<<<<<< HEAD
+<template>
+	<view class="container">
+		<!-- 顶部导航栏 -->
+		<view class="nav-bar">
+			<view class="back-btn" @click="goBack">
+				<text class="back-icon">←</text>
+			</view>
+			<text class="title">运动记录</text>
+		</view>
+
+		<!-- 运动数据卡片 -->
+		<view class="data-card">
+			<view class="data-item">
+				<text class="data-value">{{ todaySteps }}</text>
+				<text class="data-label">今日步数</text>
+			</view>
+			<view class="data-item">
+				<text class="data-value">{{ todayCalories }}</text>
+				<text class="data-label">消耗热量</text>
+			</view>
+			<view class="data-item">
+				<text class="data-value">{{ todayDistance }}</text>
+				<text class="data-label">运动距离</text>
+			</view>
+		</view>
+
+		<!-- 运动记录列表 -->
+		<view class="exercise-list">
+			<view class="list-title">运动记录</view>
+			<view class="list-item" v-for="(item, index) in exerciseRecords" :key="index">
+				<view class="item-left">
+					<image :src="item.icon" class="exercise-icon"></image>
+					<view class="exercise-info">
+						<text class="exercise-name">{{ item.name }}</text>
+						<text class="exercise-time">{{ item.time }}</text>
+					</view>
+				</view>
+				<view class="item-right">
+					<text class="exercise-duration">{{ item.duration }}</text>
+					<text class="exercise-calories">{{ item.calories }}千卡</text>
+				</view>
+			</view>
+		</view>
+	</view>
+</template>
+
+<script setup lang="uts">
+import { ref, onMounted } from 'vue'
+
+// 今日运动数据
+const todaySteps = ref(12345)
+const todayCalories = ref(280)
+const todayDistance = ref('8.5')
+
+// 运动记录列表
+const exerciseRecords = ref([
+	{
+		name: '步行',
+		time: '08:30',
+		duration: '30分钟',
+		calories: 120,
+		icon: '/static/icons/walking.png'
+	},
+	{
+		name: '跑步',
+		time: '18:00',
+		duration: '45分钟',
+		calories: 360,
+		icon: '/static/icons/running.png'
+	}
+])
+
+// 返回上一页
+const goBack = () => {
+	uni.navigateBack({
+		delta: 1,
+		fail: (err) => {
+			console.error('返回失败：', err)
+			uni.switchTab({
+				url: '/pages/index/index'
+			})
+		}
+	})
+}
+
+// 页面加载完成
+onMounted(() => {
+	console.log('运动记录页面加载完成')
+})
+</script>
+
+<style>
+.container {
+	min-height: 100vh;
+	background-color: #f7f7f7;
+}
+
+.nav-bar {
+	display: flex;
+	align-items: center;
+	padding: 20rpx;
+	background-color: #fff;
+	border-bottom: 1rpx solid #f5f5f5;
+}
+
+.back-btn {
+	padding: 20rpx;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.back-icon {
+	font-size: 40rpx;
+	color: #333;
+	font-weight: bold;
+}
+
+.title {
+	flex: 1;
+	text-align: center;
+	font-size: 32rpx;
+	font-weight: bold;
+	color: #333;
+}
+
+.data-card {
+	display: flex;
+	justify-content: space-around;
+	padding: 40rpx;
+	background-color: #fff;
+	margin: 20rpx;
+	border-radius: 20rpx;
+}
+
+.data-item {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+
+.data-value {
+	font-size: 40rpx;
+	font-weight: bold;
+	color: #4A90E2;
+	margin-bottom: 10rpx;
+}
+
+.data-label {
+	font-size: 24rpx;
+	color: #666;
+}
+
+.exercise-list {
+	background-color: #fff;
+	margin: 20rpx;
+	padding: 30rpx;
+	border-radius: 20rpx;
+}
+
+.list-title {
+	font-size: 32rpx;
+	font-weight: bold;
+	color: #333;
+	margin-bottom: 30rpx;
+}
+
+.list-item {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding: 20rpx 0;
+	border-bottom: 1rpx solid #f5f5f5;
+}
+
+.list-item:last-child {
+	border-bottom: none;
+}
+
+.item-left {
+	display: flex;
+	align-items: center;
+}
+
+.exercise-icon {
+	width: 80rpx;
+	height: 80rpx;
+	margin-right: 20rpx;
+}
+
+.exercise-info {
+	display: flex;
+	flex-direction: column;
+}
+
+.exercise-name {
+	font-size: 30rpx;
+	color: #333;
+	margin-bottom: 6rpx;
+}
+
+.exercise-time {
+	font-size: 24rpx;
+	color: #999;
+}
+
+.item-right {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-end;
+}
+
+.exercise-duration {
+	font-size: 28rpx;
+	color: #333;
+	margin-bottom: 6rpx;
+}
+
+.exercise-calories {
+	font-size: 24rpx;
+	color: #4A90E2;
+}
+=======
+<template>
+	<view class="container">
+		<!-- 顶部导航栏 -->
+		<view class="nav-bar">
+			<view class="back-btn" @click="goBack">
+				<text class="back-icon">←</text>
+			</view>
+			<text class="title">运动记录</text>
+		</view>
+
+		<!-- 运动数据卡片 -->
+		<view class="data-card">
+			<view class="data-item">
+				<text class="data-value">{{ todaySteps }}</text>
+				<text class="data-label">今日步数</text>
+			</view>
+			<view class="data-item">
+				<text class="data-value">{{ todayCalories }}</text>
+				<text class="data-label">消耗热量</text>
+			</view>
+			<view class="data-item">
+				<text class="data-value">{{ todayDistance }}</text>
+				<text class="data-label">运动距离</text>
+			</view>
+		</view>
+
+		<!-- 运动记录列表 -->
+		<view class="exercise-list">
+			<view class="list-title">运动记录</view>
+			<view class="list-item" v-for="(item, index) in exerciseRecords" :key="index">
+				<view class="item-left">
+					<image :src="item.icon" class="exercise-icon"></image>
+					<view class="exercise-info">
+						<text class="exercise-name">{{ item.name }}</text>
+						<text class="exercise-time">{{ item.time }}</text>
+					</view>
+				</view>
+				<view class="item-right">
+					<text class="exercise-duration">{{ item.duration }}</text>
+					<text class="exercise-calories">{{ item.calories }}千卡</text>
+				</view>
+			</view>
+		</view>
+	</view>
+</template>
+
+<script setup lang="uts">
+import { ref, onMounted } from 'vue'
+
+// 今日运动数据
+const todaySteps = ref(12345)
+const todayCalories = ref(280)
+const todayDistance = ref('8.5')
+
+// 运动记录列表
+const exerciseRecords = ref([
+	{
+		name: '步行',
+		time: '08:30',
+		duration: '30分钟',
+		calories: 120,
+		icon: '/static/icons/walking.png'
+	},
+	{
+		name: '跑步',
+		time: '18:00',
+		duration: '45分钟',
+		calories: 360,
+		icon: '/static/icons/running.png'
+	}
+])
+
+// 返回上一页
+const goBack = () => {
+	uni.navigateBack({
+		delta: 1,
+		fail: (err) => {
+			console.error('返回失败：', err)
+			uni.switchTab({
+				url: '/pages/index/index'
+			})
+		}
+	})
+}
+
+// 页面加载完成
+onMounted(() => {
+	console.log('运动记录页面加载完成')
+})
+</script>
+
+<style>
+.container {
+	min-height: 100vh;
+	background-color: #f7f7f7;
+}
+
+.nav-bar {
+	display: flex;
+	align-items: center;
+	padding: 20rpx;
+	background-color: #fff;
+	border-bottom: 1rpx solid #f5f5f5;
+}
+
+.back-btn {
+	padding: 20rpx;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.back-icon {
+	font-size: 40rpx;
+	color: #333;
+	font-weight: bold;
+}
+
+.title {
+	flex: 1;
+	text-align: center;
+	font-size: 32rpx;
+	font-weight: bold;
+	color: #333;
+}
+
+.data-card {
+	display: flex;
+	justify-content: space-around;
+	padding: 40rpx;
+	background-color: #fff;
+	margin: 20rpx;
+	border-radius: 20rpx;
+}
+
+.data-item {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+
+.data-value {
+	font-size: 40rpx;
+	font-weight: bold;
+	color: #4A90E2;
+	margin-bottom: 10rpx;
+}
+
+.data-label {
+	font-size: 24rpx;
+	color: #666;
+}
+
+.exercise-list {
+	background-color: #fff;
+	margin: 20rpx;
+	padding: 30rpx;
+	border-radius: 20rpx;
+}
+
+.list-title {
+	font-size: 32rpx;
+	font-weight: bold;
+	color: #333;
+	margin-bottom: 30rpx;
+}
+
+.list-item {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding: 20rpx 0;
+	border-bottom: 1rpx solid #f5f5f5;
+}
+
+.list-item:last-child {
+	border-bottom: none;
+}
+
+.item-left {
+	display: flex;
+	align-items: center;
+}
+
+.exercise-icon {
+	width: 80rpx;
+	height: 80rpx;
+	margin-right: 20rpx;
+}
+
+.exercise-info {
+	display: flex;
+	flex-direction: column;
+}
+
+.exercise-name {
+	font-size: 30rpx;
+	color: #333;
+	margin-bottom: 6rpx;
+}
+
+.exercise-time {
+	font-size: 24rpx;
+	color: #999;
+}
+
+.item-right {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-end;
+}
+
+.exercise-duration {
+	font-size: 28rpx;
+	color: #333;
+	margin-bottom: 6rpx;
+}
+
+.exercise-calories {
+	font-size: 24rpx;
+	color: #4A90E2;
+}
+>>>>>>> a673eed6f587a92e71200540c14c3c62dd06cbc5
+</style> 

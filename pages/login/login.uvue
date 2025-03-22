@@ -1,0 +1,372 @@
+<template>
+	<view class="container">
+		<!-- 顶部健康生活图标 -->
+		<view class="header">
+			<image src="/static/icons/health-life.png" class="logo" @error="handleImageError"></image>
+			<text class="title">健康生活</text>
+			<text class="subtitle">让每一天都充满活力</text>
+		</view>
+
+		<!-- 登录表单 -->
+		<view class="login-form">
+			<view class="form-item">
+				<text class="iconfont icon-user"></text>
+				<input type="text" v-model="username" placeholder="请输入用户名" class="input" />
+			</view>
+			<view class="form-item">
+				<text class="iconfont icon-lock"></text>
+				<input type="password" v-model="password" placeholder="请输入密码" class="input" />
+			</view>
+			<button class="login-btn" @click="handleLogin">登录</button>
+			
+			<!-- 第三方登录 -->
+			<view class="third-party-login">
+				<view class="divider">
+					<text class="divider-text">其他登录方式</text>
+				</view>
+				<view class="login-methods">
+					<view class="method-item" @click="handleWechatLogin">
+						<image src="/static/icons/wechat.png" class="method-icon" @error="handleImageError"></image>
+						<text>微信登录</text>
+					</view>
+					<view class="method-item" @click="handleQQLogin">
+						<image src="/static/icons/qq.png" class="method-icon" @error="handleImageError"></image>
+						<text>QQ登录</text>
+					</view>
+					<view class="method-item" @click="handlePhoneLogin">
+						<image src="/static/icons/phone.png" class="method-icon" @error="handleImageError"></image>
+						<text>手机号登录</text>
+					</view>
+				</view>
+			</view>
+			
+			<!-- 健康生活小贴士 -->
+			<view class="health-tips">
+				<view class="tip-item">
+					<text class="tip-icon">🌱</text>
+					<text class="tip-text">每天喝够8杯水</text>
+				</view>
+				<view class="tip-item">
+					<text class="tip-icon">🏃</text>
+					<text class="tip-text">保持规律运动</text>
+				</view>
+				<view class="tip-item">
+					<text class="tip-icon">😴</text>
+					<text class="tip-text">保证充足睡眠</text>
+				</view>
+			</view>
+		</view>
+
+		<!-- 底部注册链接 -->
+		<view class="footer">
+			<text class="register-link" @click="navigateToRegister">还没有账号？立即注册</text>
+		</view>
+	</view>
+</template>
+
+<script setup lang="uts">
+import { ref, onMounted } from 'vue'
+
+const username = ref('')
+const password = ref('')
+
+// 图片加载错误处理
+const handleImageError = (e: any) => {
+	console.error('图片加载失败：', e)
+	uni.showToast({
+		title: '图片加载失败',
+		icon: 'none'
+	})
+}
+
+// 页面加载完成
+onMounted(() => {
+	console.log('登录页面加载完成')
+})
+
+// 账号密码登录
+const handleLogin = () => {
+	if (!username.value || !password.value) {
+		uni.showToast({
+			title: '请输入用户名和密码',
+			icon: 'none'
+		})
+		return
+	}
+	
+	console.log('开始登录...')
+	uni.showLoading({
+		title: '登录中...'
+	})
+	
+	setTimeout(() => {
+		uni.hideLoading()
+		console.log('登录成功，跳转到首页')
+		uni.switchTab({
+			url: '/pages/index/index',
+			fail: (err) => {
+				console.error('跳转失败：', err)
+				uni.showToast({
+					title: '页面跳转失败，请重试',
+					icon: 'none',
+					duration: 2000
+				})
+			},
+			success: () => {
+				console.log('跳转成功')
+			}
+		})
+	}, 1500)
+}
+
+// 微信登录
+const handleWechatLogin = () => {
+	console.log('开始微信登录...')
+	uni.showLoading({
+		title: '微信登录中...'
+	})
+	
+	setTimeout(() => {
+		uni.hideLoading()
+		console.log('微信登录成功')
+		uni.switchTab({
+			url: '/pages/index/index',
+			fail: (err) => {
+				console.error('跳转失败：', err)
+				uni.showToast({
+					title: '页面跳转失败，请重试',
+					icon: 'none',
+					duration: 2000
+				})
+			},
+			success: () => {
+				console.log('跳转成功')
+			}
+		})
+	}, 1500)
+}
+
+// QQ登录
+const handleQQLogin = () => {
+	console.log('开始QQ登录...')
+	uni.showLoading({
+		title: 'QQ登录中...'
+	})
+	
+	setTimeout(() => {
+		uni.hideLoading()
+		console.log('QQ登录成功')
+		uni.switchTab({
+			url: '/pages/index/index',
+			fail: (err) => {
+				console.error('跳转失败：', err)
+				uni.showToast({
+					title: '页面跳转失败，请重试',
+					icon: 'none',
+					duration: 2000
+				})
+			},
+			success: () => {
+				console.log('跳转成功')
+			}
+		})
+	}, 1500)
+}
+
+// 手机号登录
+const handlePhoneLogin = () => {
+	console.log('开始手机号登录...')
+	uni.showLoading({
+		title: '手机号登录中...'
+	})
+	
+	setTimeout(() => {
+		uni.hideLoading()
+		console.log('手机号登录成功')
+		uni.switchTab({
+			url: '/pages/index/index',
+			fail: (err) => {
+				console.error('跳转失败：', err)
+				uni.showToast({
+					title: '页面跳转失败，请重试',
+					icon: 'none',
+					duration: 2000
+				})
+			},
+			success: () => {
+				console.log('跳转成功')
+			}
+		})
+	}, 1500)
+}
+
+// 跳转到注册页面
+const navigateToRegister = () => {
+	console.log('跳转到注册页面')
+	uni.navigateTo({
+		url: '/pages/register/register',
+		fail: (err) => {
+			console.error('跳转失败：', err)
+			uni.showToast({
+				title: '页面跳转失败',
+				icon: 'none'
+			})
+		}
+	})
+}
+</script>
+
+<style>
+.container {
+	min-height: 100vh;
+	background-color: #F5F9FF;
+	padding: 60rpx 40rpx;
+	display: flex;
+	flex-direction: column;
+}
+
+.header {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	margin-bottom: 80rpx;
+}
+
+.logo {
+	width: 160rpx;
+	height: 160rpx;
+	margin-bottom: 30rpx;
+}
+
+.title {
+	font-size: 48rpx;
+	font-weight: bold;
+	color: #4A90E2;
+	margin-bottom: 16rpx;
+}
+
+.subtitle {
+	font-size: 28rpx;
+	color: #666;
+}
+
+.login-form {
+	background-color: #fff;
+	border-radius: 24rpx;
+	padding: 40rpx;
+	box-shadow: 0 4rpx 16rpx rgba(74, 144, 226, 0.1);
+}
+
+.form-item {
+	display: flex;
+	align-items: center;
+	background-color: #f8f8f8;
+	border-radius: 12rpx;
+	padding: 20rpx;
+	margin-bottom: 30rpx;
+}
+
+.iconfont {
+	font-size: 40rpx;
+	color: #4A90E2;
+	margin-right: 20rpx;
+}
+
+.input {
+	flex: 1;
+	font-size: 28rpx;
+}
+
+.login-btn {
+	width: 100%;
+	height: 88rpx;
+	background-color: #4A90E2;
+	color: #fff;
+	font-size: 32rpx;
+	border-radius: 44rpx;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	margin-top: 60rpx;
+}
+
+.third-party-login {
+	margin-top: 60rpx;
+}
+
+.divider {
+	display: flex;
+	align-items: center;
+	margin-bottom: 40rpx;
+}
+
+.divider::before,
+.divider::after {
+	content: '';
+	flex: 1;
+	height: 1rpx;
+	background-color: #eee;
+}
+
+.divider-text {
+	padding: 0 20rpx;
+	font-size: 24rpx;
+	color: #999;
+}
+
+.login-methods {
+	display: flex;
+	justify-content: space-around;
+	padding: 0 40rpx;
+}
+
+.method-item {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+
+.method-icon {
+	width: 80rpx;
+	height: 80rpx;
+	margin-bottom: 10rpx;
+}
+
+.method-item text {
+	font-size: 24rpx;
+	color: #666;
+}
+
+.health-tips {
+	margin-top: 60rpx;
+	padding-top: 40rpx;
+	border-top: 1rpx solid #f0f0f0;
+}
+
+.tip-item {
+	display: flex;
+	align-items: center;
+	margin-bottom: 20rpx;
+}
+
+.tip-icon {
+	font-size: 40rpx;
+	margin-right: 20rpx;
+}
+
+.tip-text {
+	font-size: 26rpx;
+	color: #666;
+}
+
+.footer {
+	margin-top: auto;
+	padding: 40rpx 0;
+	text-align: center;
+}
+
+.register-link {
+	font-size: 28rpx;
+	color: #4A90E2;
+}
+</style> 

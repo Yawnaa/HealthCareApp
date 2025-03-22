@@ -1,0 +1,464 @@
+<template>
+	<view class="container">
+		<!-- 顶部标题 -->
+		<view class="header">
+			<text class="title">健康打卡</text>
+			<text class="subtitle">记录每一天的健康生活</text>
+		</view>
+
+		<!-- 天数统计卡片 -->
+		<view class="stats-card">
+			<view class="stats-item">
+				<text class="stats-num">{{ totalDays }}</text>
+				<text class="stats-label">累计打卡</text>
+			</view>
+			<view class="stats-item">
+				<text class="stats-num">{{ continuousDays }}</text>
+				<text class="stats-label">连续打卡</text>
+			</view>
+			<view class="stats-item">
+				<text class="stats-num">{{ monthDays }}</text>
+				<text class="stats-label">本月打卡</text>
+			</view>
+		</view>
+
+		<!-- 饮食运动数据 -->
+		<view class="data-section">
+			<view class="data-card" @click="navigateToExercise">
+				<text class="data-title">运动记录</text>
+				<view class="data-content">
+					<text class="data-value">{{ exerciseScore }}</text>
+					<text class="data-unit">分</text>
+				</view>
+			</view>
+			<view class="data-card" @click="navigateToAIDoctor">
+				<text class="data-title">AI医生</text>
+				<view class="data-content">
+					<image src="/static/icons/health-life.png" class="icon"></image>
+					<text class="data-unit">问答</text>
+				</view>
+			</view>
+		</view>
+
+		<!-- 日历表格 -->
+		<view class="calendar-section">
+			<view class="calendar-header">
+				<text class="calendar-title">日历</text>
+				<view class="calendar-nav">
+					<view class="calendar-nav-btn" @click="prevMonth">
+						<text class="calendar-nav-icon">&#xe615;</text>
+					</view>
+					<view class="calendar-nav-btn" @click="nextMonth">
+						<text class="calendar-nav-icon">&#xe614;</text>
+					</view>
+				</view>
+			</view>
+			<view class="calendar-weeks">
+				<view class="weekday" v-for="day in weekdays" :key="day">{{ day }}</view>
+			</view>
+			<view class="calendar-days">
+				<view class="day-item" v-for="day in calendarDays" :key="day.date"
+						:class="{'weekend': day.isWeekend, 'other-month': day.isOtherMonth, 'today': day.isToday, 'checked': day.checked}"
+						@click="toggleCheck(day.date)">
+					{{ day.day }}
+				</view>
+			</view>
+		</view>
+
+		<!-- 今日打卡 -->
+		<view class="today-check">
+			<view class="check-title">今日打卡</view>
+			<view class="check-grid">
+				<view class="check-item" v-for="(item, index) in checkItems" :key="index"
+						@click="toggleCheckItem(index)">
+					<image :src="item.icon" class="check-icon"></image>
+					<text class="check-label">{{ item.label }}</text>
+					<text class="check-status" :class="item.checked ? 'checked' : ''">
+						{{ item.checked ? '已完成' : '未完成' }}
+					</text>
+				</view>
+			</view>
+		</view>
+	</view>
+</template>
+
+<script setup lang="uts">
+import { ref, computed } from 'vue'
+
+// 统计数据
+const totalDays = ref(128)
+const continuousDays = ref(7)
+const monthDays = ref(15)
+
+// 饮食运动数据
+const dietScore = ref(85)
+const exerciseScore = ref(90)
+
+// 日历数据
+const currentDate = ref(new Date())
+const weekdays = ['日', '一', '二', '三', '四', '五', '六']
+const checkedDates = ref(new Set())
+
+// 计算日历数据
+const calendarDays = computed(() => {
+	const year = currentDate.value.getFullYear()
+	const month = currentDate.value.getMonth()
+	const firstDay = new Date(year, month, 1)
+	const lastDay = new Date(year, month + 1, 0)
+	const daysInMonth = lastDay.getDate()
+	const firstDayWeek = firstDay.getDay()
+	
+	const days = []
+	const today = new Date()
+	
+	// 填充上个月的日期
+	for (let i = 0; i < firstDayWeek; i++) {
+		const prevDate = new Date(firstDay)
+		prevDate.setDate(prevDate.getDate() - (firstDayWeek - i))
+		const dateStr = `${prevDate.getFullYear()}-${String(prevDate.getMonth() + 1).padStart(2, '0')}-${String(prevDate.getDate()).padStart(2, '0')}`
+		days.push({
+			date: dateStr,
+			day: prevDate.getDate(),
+			isOtherMonth: true,
+			isWeekend: prevDate.getDay() === 0 || prevDate.getDay() === 6,
+			isToday: false,
+			checked: checkedDates.value.has(dateStr)
+		})
+	}
+	
+	// 添加当前月的日期
+	for (let i = 1; i <= daysInMonth; i++) {
+		const date = new Date(year, month, i)
+		const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(i).padStart(2, '0')}`
+		days.push({
+			date: dateStr,
+			day: i,
+			isOtherMonth: false,
+			isWeekend: date.getDay() === 0 || date.getDay() === 6,
+			isToday: dateStr === `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`,
+			checked: checkedDates.value.has(dateStr)
+		})
+	}
+	
+	// 添加下个月的日期
+	const remainingDays = 42 - days.length
+	for (let i = 1; i <= remainingDays; i++) {
+		const nextDate = new Date(year, month + 1, i)
+		const dateStr = `${nextDate.getFullYear()}-${String(nextDate.getMonth() + 1).padStart(2, '0')}-${String(nextDate.getDate()).padStart(2, '0')}`
+		days.push({
+			date: dateStr,
+			day: nextDate.getDate(),
+			isOtherMonth: true,
+			isWeekend: nextDate.getDay() === 0 || nextDate.getDay() === 6,
+			isToday: false,
+			checked: checkedDates.value.has(dateStr)
+		})
+	}
+	
+	return days
+})
+
+// 月份切换
+const prevMonth = () => {
+	const newDate = new Date(currentDate.value.getFullYear(), currentDate.value.getMonth() - 1)
+	currentDate.value = newDate
+}
+
+const nextMonth = () => {
+	const newDate = new Date(currentDate.value.getFullYear(), currentDate.value.getMonth() + 1)
+	currentDate.value = newDate
+}
+
+// 打卡操作
+const toggleCheck = (date: string) => {
+	if (checkedDates.value.has(date)) {
+		checkedDates.value.delete(date)
+	} else {
+		checkedDates.value.add(date)
+	}
+}
+
+// 今日打卡项目
+const checkItems = ref([
+	{ label: '早餐', icon: '/static/icons/breakfast.png', checked: true },
+	{ label: '运动', icon: '/static/icons/exercise.png', checked: false },
+	{ label: '午餐', icon: '/static/icons/lunch.png', checked: true },
+	{ label: '晚餐', icon: '/static/icons/dinner.png', checked: false }
+])
+
+// 打卡操作
+const toggleCheckItem = (index: number) => {
+	checkItems.value[index].checked = !checkItems.value[index].checked
+}
+
+// 页面跳转
+const navigateToExercise = () => {
+	uni.navigateTo({
+		url: '/pages/exercise/exercise',
+		fail: (err) => {
+			console.error('跳转失败：', err)
+			uni.showToast({
+				title: '页面跳转失败',
+				icon: 'none'
+			})
+		}
+	})
+}
+
+const navigateToAIDoctor = () => {
+	uni.navigateTo({
+		url: '/pages/ai-doctor/ai-doctor',
+		fail: (err) => {
+			console.error('跳转失败：', err)
+			uni.showToast({
+				title: '页面跳转失败',
+				icon: 'none'
+			})
+		}
+	})
+}
+</script>
+
+<style>
+.container {
+	padding: 30rpx;
+	background-color: #F5F9FF;
+	min-height: 100vh;
+}
+
+.header {
+	margin-bottom: 30rpx;
+	padding: 20rpx 0;
+}
+
+.title {
+	font-size: 44rpx;
+	font-weight: bold;
+	color: #4A90E2;
+	text-shadow: 0 2rpx 4rpx rgba(74, 144, 226, 0.1);
+}
+
+.subtitle {
+	font-size: 26rpx;
+	color: #4A90E2;
+	opacity: 0.8;
+	margin-top: 10rpx;
+}
+
+.stats-card {
+	background-color: #fff;
+	border-radius: 24rpx;
+	padding: 40rpx;
+	display: flex;
+	justify-content: space-between;
+	margin-bottom: 30rpx;
+	box-shadow: 0 4rpx 16rpx rgba(74, 144, 226, 0.1);
+}
+
+.stats-item {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+
+.stats-num {
+	font-size: 48rpx;
+	font-weight: bold;
+	color: #4A90E2;
+	margin-bottom: 8rpx;
+}
+
+.stats-label {
+	font-size: 26rpx;
+	color: #666;
+}
+
+.data-section {
+	display: flex;
+	gap: 20rpx;
+	margin-bottom: 30rpx;
+}
+
+.data-card {
+	flex: 1;
+	background-color: #fff;
+	border-radius: 24rpx;
+	padding: 40rpx;
+	box-shadow: 0 4rpx 16rpx rgba(74, 144, 226, 0.1);
+}
+
+.data-title {
+	font-size: 28rpx;
+	color: #666;
+	margin-bottom: 20rpx;
+}
+
+.data-content {
+	display: flex;
+	align-items: baseline;
+}
+
+.data-value {
+	font-size: 56rpx;
+	font-weight: bold;
+	color: #4A90E2;
+}
+
+.data-unit {
+	font-size: 26rpx;
+	color: #666;
+	margin-left: 10rpx;
+}
+
+.calendar-section {
+	background-color: #fff;
+	border-radius: 24rpx;
+	padding: 30rpx;
+	margin-bottom: 30rpx;
+	box-shadow: 0 4rpx 16rpx rgba(74, 144, 226, 0.1);
+}
+
+.calendar-header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: 20rpx;
+}
+
+.calendar-title {
+	font-size: 32rpx;
+	font-weight: bold;
+	color: #333;
+}
+
+.calendar-nav {
+	display: flex;
+	gap: 20rpx;
+}
+
+.calendar-nav-btn {
+	width: 60rpx;
+	height: 60rpx;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background-color: #f8f8f8;
+	border-radius: 30rpx;
+}
+
+.calendar-nav-btn:active {
+	background-color: #e8e8e8;
+}
+
+.calendar-nav-icon {
+	font-size: 32rpx;
+	color: #4A90E2;
+}
+
+.calendar-weeks {
+	display: grid;
+	grid-template-columns: repeat(7, 1fr);
+	margin-bottom: 10rpx;
+}
+
+.weekday {
+	text-align: center;
+	font-size: 26rpx;
+	color: #999;
+}
+
+.calendar-days {
+	display: grid;
+	grid-template-columns: repeat(7, 1fr);
+	gap: 10rpx;
+}
+
+.day-item {
+	aspect-ratio: 1;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 28rpx;
+	color: #333;
+	position: relative;
+}
+
+.day-item.weekend {
+	color: #ff6b6b;
+}
+
+.day-item.other-month {
+	color: #ccc;
+}
+
+.day-item.today {
+	color: #4A90E2;
+	font-weight: bold;
+}
+
+.day-item.checked::after {
+	content: '';
+	position: absolute;
+	bottom: 10rpx;
+	width: 8rpx;
+	height: 8rpx;
+	background-color: #4A90E2;
+	border-radius: 4rpx;
+}
+
+.today-check {
+	background-color: #fff;
+	border-radius: 24rpx;
+	padding: 40rpx;
+	box-shadow: 0 4rpx 16rpx rgba(74, 144, 226, 0.1);
+}
+
+.check-title {
+	font-size: 32rpx;
+	font-weight: bold;
+	color: #333;
+	margin-bottom: 30rpx;
+}
+
+.check-grid {
+	display: grid;
+	grid-template-columns: repeat(2, 1fr);
+	gap: 20rpx;
+}
+
+.check-item {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	padding: 30rpx;
+	background-color: #f8f8f8;
+	border-radius: 20rpx;
+	transition: all 0.3s;
+}
+
+.check-item:active {
+	background-color: #e8e8e8;
+}
+
+.check-icon {
+	width: 80rpx;
+	height: 80rpx;
+	margin-bottom: 16rpx;
+}
+
+.check-label {
+	font-size: 28rpx;
+	color: #333;
+	margin-bottom: 12rpx;
+}
+
+.check-status {
+	font-size: 26rpx;
+	color: #999;
+}
+
+.check-status.checked {
+	color: #4A90E2;
+	font-weight: bold;
+}
+</style>

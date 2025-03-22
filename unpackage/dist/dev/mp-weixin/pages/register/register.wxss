@@ -1,0 +1,109 @@
+@import "../../uvue.wxss";
+:host{display:flex;flex-direction:column}
+
+.container {
+	min-height: 100vh;
+	background-color: #F5F9FF;
+	padding: 60rpx 40rpx;
+	display: flex;
+	flex-direction: column;
+}
+.header {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	margin-bottom: 60rpx;
+}
+.title {
+	font-size: 48rpx;
+	font-weight: bold;
+	color: #4A90E2;
+	margin-bottom: 16rpx;
+}
+.subtitle {
+	font-size: 28rpx;
+	color: #666;
+}
+.register-form {
+	background-color: #fff;
+	border-radius: 24rpx;
+	padding: 40rpx;
+	box-shadow: 0 4rpx 16rpx rgba(74, 144, 226, 0.1);
+}
+.form-item {
+	margin-bottom: 30rpx;
+}
+.label {
+	font-size: 28rpx;
+	color: #666;
+	margin-bottom: 10rpx;
+	display: block;
+}
+.input {
+	width: 100%;
+	height: 80rpx;
+	background-color: #f8f8f8;
+	border-radius: 12rpx;
+	padding: 0 20rpx;
+	font-size: 28rpx;
+}
+.code-input {
+	display: flex;
+	gap: 20rpx;
+}
+.code-input .input {
+	flex: 1;
+}
+.code-btn {
+	width: 200rpx;
+	height: 80rpx;
+	background-color: #4A90E2;
+	color: #fff;
+	font-size: 24rpx;
+	border-radius: 12rpx;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+.code-btn[disabled] {
+	background-color: #ccc;
+}
+.register-btn {
+	width: 100%;
+	height: 88rpx;
+	background-color: #4A90E2;
+	color: #fff;
+	font-size: 32rpx;
+	border-radius: 44rpx;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	margin-top: 60rpx;
+}
+.health-tips {
+	margin-top: 60rpx;
+	padding-top: 40rpx;
+	border-top: 1rpx solid #f0f0f0;
+}
+.tip-item {
+	display: flex;
+	align-items: center;
+	margin-bottom: 20rpx;
+}
+.tip-icon {
+	font-size: 40rpx;
+	margin-right: 20rpx;
+}
+.tip-text {
+	font-size: 26rpx;
+	color: #666;
+}
+.footer {
+	margin-top: auto;
+	padding: 40rpx 0;
+	text-align: center;
+}
+.login-link {
+	font-size: 28rpx;
+	color: #4A90E2;
+}

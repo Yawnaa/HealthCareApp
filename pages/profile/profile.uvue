@@ -1,0 +1,603 @@
+<template>
+	<view class="container">
+		<!-- 头部区域 -->
+		<view class="header">
+			<view v-if="loading" class="skeleton-header">
+				<view class="skeleton-avatar"></view>
+				<view class="skeleton-info">
+					<view class="skeleton-name"></view>
+					<view class="skeleton-phone"></view>
+				</view>
+			</view>
+			<view v-else class="user-info">
+				<view class="avatar-section" @tap="handleEditAvatar">
+					<image :src="userInfo.avatar || '/static/icons/default-avatar.png'" class="avatar" mode="aspectFill"></image>
+					<view class="edit-avatar-hint">点击更换头像</view>
+				</view>
+				<view class="info-section">
+					<view class="name-row">
+						<text class="name">{{ userInfo.nickname || '未设置昵称' }}</text>
+						<text class="edit-icon" @tap="handleEditProfile">编辑</text>
+					</view>
+					<text class="phone">{{ userInfo.phone || '未绑定手机' }}</text>
+					<view class="user-tags">
+						<text class="tag" v-if="userInfo.isVip">VIP会员</text>
+						<text class="tag" v-if="userInfo.isVerified">已认证</text>
+					</view>
+				</view>
+			</view>
+		</view>
+
+		<!-- 健康数据概览 -->
+		<view class="health-overview">
+			<view class="overview-item">
+				<text class="value">{{ healthData.consultCount || 0 }}</text>
+				<text class="label">问诊次数</text>
+			</view>
+			<view class="overview-item">
+				<text class="value">{{ healthData.score || 0 }}</text>
+				<text class="label">健康评分</text>
+			</view>
+			<view class="overview-item">
+				<text class="value">{{ healthData.medicineCount || 0 }}</text>
+				<text class="label">用药记录</text>
+			</view>
+		</view>
+
+		<!-- 功能列表 -->
+		<view class="menu-list">
+			<view v-if="loading" class="skeleton-menu">
+				<view class="skeleton-item" v-for="i in 5" :key="i"></view>
+			</view>
+			<view v-else>
+				<view class="menu-group">
+					<view class="menu-item" @tap="handleHealthData" hover-class="menu-item-active">
+						<image src="/static/icons/health-life.png" class="menu-icon"></image>
+						<text class="menu-text">健康档案</text>
+						<text class="arrow">></text>
+					</view>
+					<view class="menu-item" @tap="handleMedicalRecords" hover-class="menu-item-active">
+						<image src="/static/icons/medical-records.png" class="menu-icon"></image>
+						<text class="menu-text">就医记录</text>
+						<text class="arrow">></text>
+					</view>
+					<view class="menu-item" @tap="handlePrescriptions" hover-class="menu-item-active">
+						<image src="/static/icons/prescriptions.png" class="menu-icon"></image>
+						<text class="menu-text">处方管理</text>
+						<text class="arrow">></text>
+					</view>
+				</view>
+
+				<view class="menu-group">
+					<view class="menu-item" @tap="handleSettings" hover-class="menu-item-active">
+						<image src="/static/icons/settings.png" class="menu-icon"></image>
+						<text class="menu-text">设置</text>
+						<text class="arrow">></text>
+					</view>
+					<view class="menu-item" @tap="handleAbout" hover-class="menu-item-active">
+						<image src="/static/icons/about.png" class="menu-icon"></image>
+						<text class="menu-text">关于我们</text>
+						<text class="arrow">></text>
+					</view>
+					<view class="menu-item" @tap="handleFeedback" hover-class="menu-item-active">
+						<image src="/static/icons/feedback.png" class="menu-icon"></image>
+						<text class="menu-text">意见反馈</text>
+						<text class="arrow">></text>
+					</view>
+				</view>
+			</view>
+		</view>
+
+		<!-- 退出登录按钮 -->
+		<view class="logout-btn safe-area-inset-bottom" @tap="handleLogout">
+			<text class="logout-text">退出登录</text>
+		</view>
+	</view>
+</template>
+
+<script>
+const app = getApp()
+
+export default {
+	data() {
+		return {
+			userInfo: {
+				nickname: '',
+				phone: '',
+				avatar: '',
+				isVip: false,
+				isVerified: false
+			},
+			healthData: {
+				consultCount: 0,
+				score: 0,
+				medicineCount: 0
+			},
+			loading: true,
+			apiVersion: '',
+			logoutTimer: null
+		}
+	},
+
+	onLoad() {
+		console.log('个人信息页面加载完成')
+		this.checkApiVersion()
+		this.getUserInfo()
+		this.getHealthData()
+	},
+
+	// 检查API版本
+	checkApiVersion() {
+		app.vm?.request({
+			url: '/api/version'
+		}).then(res => {
+			if (res.version !== this.apiVersion) {
+				uni.showModal({
+					title: '版本更新',
+					content: '发现新版本，是否立即更新？',
+					success: (res) => {
+						if (res.confirm) {
+							this.updateApp()
+						}
+					}
+				})
+			}
+		}).catch(err => {
+			console.error('检查版本失败：', err)
+		})
+	},
+
+	// 更新应用
+	updateApp() {
+		// #ifdef APP-PLUS
+		plus.runtime.getProperty(plus.runtime.appid, (widgetInfo) => {
+			uni.showModal({
+				title: '更新提示',
+				content: '新版本已经准备好，是否重启应用？',
+				success: (res) => {
+					if (res.confirm) {
+						plus.runtime.restart()
+					}
+				}
+			})
+		})
+		// #endif
+	},
+
+	// 获取用户信息
+	getUserInfo() {
+		app.vm?.request({
+			url: '/user/info'
+		}).then(res => {
+			this.userInfo = res
+			this.loading = false
+		}).catch(err => {
+			console.error('获取用户信息失败：', err)
+			uni.showToast({
+				title: '获取用户信息失败',
+				icon: 'none'
+			})
+			this.loading = false
+		})
+	},
+
+	// 获取健康数据
+	getHealthData() {
+		app.vm?.request({
+			url: '/user/health-data'
+		}).then(res => {
+			this.healthData = res
+		}).catch(err => {
+			console.error('获取健康数据失败：', err)
+		})
+	},
+
+	// 编辑头像
+	handleEditAvatar() {
+		uni.chooseImage({
+			count: 1,
+			success: (res) => {
+				const tempFilePath = res.tempFilePaths[0]
+				uni.uploadFile({
+					url: '/api/upload/avatar',
+					filePath: tempFilePath,
+					name: 'avatar',
+					success: (uploadRes) => {
+						const data = JSON.parse(uploadRes.data)
+						this.userInfo.avatar = data.url
+						uni.showToast({
+							title: '头像更新成功',
+							icon: 'success'
+						})
+					},
+					fail: (err) => {
+						console.error('上传头像失败：', err)
+						uni.showToast({
+							title: '上传失败',
+							icon: 'none'
+						})
+					}
+				})
+			}
+		})
+	},
+
+	// 编辑个人资料
+	handleEditProfile() {
+		uni.navigateTo({
+			url: './edit-profile',
+			fail: (err) => {
+				console.error('跳转失败：', err)
+				uni.showToast({
+					title: '页面跳转失败',
+					icon: 'none'
+				})
+			}
+		})
+	},
+
+	// 健康档案
+	handleHealthData() {
+		uni.navigateTo({
+			url: '/pages/health-data/health-data',
+			fail: (err) => {
+				console.error('跳转失败：', err)
+				uni.showToast({
+					title: '页面跳转失败',
+					icon: 'none'
+				})
+			}
+		})
+	},
+
+	// 就医记录
+	handleMedicalRecords() {
+		uni.navigateTo({
+			url: '/pages/medical-records/medical-records',
+			fail: (err) => {
+				console.error('跳转失败：', err)
+				uni.showToast({
+					title: '页面跳转失败',
+					icon: 'none'
+				})
+			}
+		})
+	},
+
+	// 处方管理
+	handlePrescriptions() {
+		uni.navigateTo({
+			url: '/pages/prescriptions/prescriptions',
+			fail: (err) => {
+				console.error('跳转失败：', err)
+				uni.showToast({
+					title: '页面跳转失败',
+					icon: 'none'
+				})
+			}
+		})
+	},
+
+	// 设置
+	handleSettings() {
+		uni.navigateTo({
+			url: '/pages/settings/settings',
+			fail: (err) => {
+				console.error('跳转失败：', err)
+				uni.showToast({
+					title: '页面跳转失败',
+					icon: 'none'
+				})
+			}
+		})
+	},
+
+	// 关于我们
+	handleAbout() {
+		uni.navigateTo({
+			url: '/pages/about/about',
+			fail: (err) => {
+				console.error('跳转失败：', err)
+				uni.showToast({
+					title: '页面跳转失败',
+					icon: 'none'
+				})
+			}
+		})
+	},
+
+	// 意见反馈
+	handleFeedback() {
+		uni.navigateTo({
+			url: '/pages/feedback/feedback',
+			fail: (err) => {
+				console.error('跳转失败：', err)
+				uni.showToast({
+					title: '页面跳转失败',
+					icon: 'none'
+				})
+			}
+		})
+	},
+
+	// 退出登录（带防抖）
+	handleLogout() {
+		if (this.logoutTimer) {
+			clearTimeout(this.logoutTimer)
+		}
+		
+		this.logoutTimer = setTimeout(() => {
+			uni.showModal({
+				title: '提示',
+				content: '确定要退出登录吗？',
+				success: (res) => {
+					if (res.confirm) {
+						console.log('用户点击确定')
+						uni.reLaunch({
+							url: '/pages/login/login',
+							fail: (err) => {
+								console.error('跳转失败：', err)
+								uni.showToast({
+									title: '退出失败',
+									icon: 'none'
+								})
+							}
+						})
+					}
+				}
+			})
+		}, 300)
+	}
+}
+</script>
+
+<style>
+:root {
+	--primary-color: #4A90E2;
+	--primary-text: #333;
+	--secondary-text: #666;
+	--divider-color: #eee;
+	--active-bg: #f9f9f9;
+	--danger-color: #ff4d4f;
+	--border-radius: 16rpx;
+	--line-height: calc(1em + 8rpx);
+}
+
+.container {
+	min-height: 100vh;
+	background-color: #f5f5f5;
+	padding-bottom: calc(60rpx + env(safe-area-inset-bottom));
+}
+
+/* 头部区域样式 */
+.header {
+	background-color: #fff;
+	padding: 40rpx 30rpx;
+	margin-bottom: 20rpx;
+}
+
+.user-info {
+	display: flex;
+	align-items: center;
+}
+
+.avatar-section {
+	position: relative;
+	margin-right: 30rpx;
+}
+
+.avatar {
+	width: 120rpx;
+	height: 120rpx;
+	border-radius: 60rpx;
+	border: 4rpx solid var(--primary-color);
+}
+
+.edit-avatar-hint {
+	position: absolute;
+	bottom: -30rpx;
+	left: 50%;
+	transform: translateX(-50%);
+	font-size: 24rpx;
+	color: var(--secondary-text);
+	white-space: nowrap;
+}
+
+.info-section {
+	flex: 1;
+}
+
+.name-row {
+	display: flex;
+	align-items: center;
+	margin-bottom: 10rpx;
+}
+
+.name {
+	font-size: 36rpx;
+	font-weight: bold;
+	color: var(--primary-text);
+	margin-right: 20rpx;
+}
+
+.edit-icon {
+	font-size: 24rpx;
+	color: var(--primary-color);
+	padding: 4rpx 12rpx;
+	border: 1rpx solid var(--primary-color);
+	border-radius: 20rpx;
+}
+
+.phone {
+	font-size: 28rpx;
+	color: var(--secondary-text);
+	margin-bottom: 10rpx;
+}
+
+.user-tags {
+	display: flex;
+	gap: 10rpx;
+}
+
+.tag {
+	font-size: 24rpx;
+	color: var(--primary-color);
+	background-color: rgba(74, 144, 226, 0.1);
+	padding: 4rpx 12rpx;
+	border-radius: 20rpx;
+}
+
+/* 健康数据概览 */
+.health-overview {
+	background-color: #fff;
+	padding: 30rpx;
+	margin-bottom: 20rpx;
+	display: flex;
+	justify-content: space-around;
+}
+
+.overview-item {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+
+.overview-item .value {
+	font-size: 40rpx;
+	font-weight: bold;
+	color: var(--primary-color);
+	margin-bottom: 8rpx;
+}
+
+.overview-item .label {
+	font-size: 24rpx;
+	color: var(--secondary-text);
+}
+
+/* 功能列表样式 */
+.menu-list {
+	padding: 0 20rpx;
+}
+
+.menu-group {
+	background-color: #fff;
+	border-radius: var(--border-radius);
+	margin-bottom: 20rpx;
+	overflow: hidden;
+}
+
+.menu-item {
+	display: flex;
+	align-items: center;
+	height: 100rpx;
+	padding: 0 30rpx;
+	border-bottom: 1rpx solid var(--divider-color);
+	position: relative;
+	will-change: transform;
+}
+
+.menu-item:last-child {
+	border-bottom: none;
+}
+
+.menu-icon {
+	width: 40rpx;
+	height: 40rpx;
+	margin-right: 20rpx;
+}
+
+.menu-text {
+	flex: 1;
+	font-size: 30rpx;
+	color: var(--primary-text);
+}
+
+.arrow {
+	font-size: 30rpx;
+	color: var(--secondary-text);
+}
+
+.menu-item-active {
+	background-color: var(--active-bg);
+	transform: scale(0.98);
+	transition: transform 0.2s ease;
+}
+
+/* 退出按钮样式 */
+.logout-btn {
+	position: fixed;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	height: 100rpx;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background-color: #fff;
+	padding-bottom: env(safe-area-inset-bottom);
+	will-change: opacity;
+}
+
+.logout-text {
+	font-size: 32rpx;
+	color: var(--danger-color);
+}
+
+/* 骨架屏样式 */
+.skeleton-header {
+	display: flex;
+	align-items: center;
+}
+
+.skeleton-avatar {
+	width: 120rpx;
+	height: 120rpx;
+	border-radius: 60rpx;
+	background: #f0f0f0;
+	margin-right: 30rpx;
+	animation: skeleton-loading 1.4s infinite;
+}
+
+.skeleton-info {
+	flex: 1;
+}
+
+.skeleton-name {
+	width: 200rpx;
+	height: 36rpx;
+	background: #f0f0f0;
+	border-radius: 4rpx;
+	margin-bottom: 20rpx;
+	animation: skeleton-loading 1.4s infinite;
+}
+
+.skeleton-phone {
+	width: 300rpx;
+	height: 28rpx;
+	background: #f0f0f0;
+	border-radius: 4rpx;
+	animation: skeleton-loading 1.4s infinite;
+}
+
+.skeleton-menu {
+	padding: 20rpx;
+}
+
+.skeleton-item {
+	width: 100%;
+	height: 100rpx;
+	background: #f0f0f0;
+	border-radius: 4rpx;
+	margin-bottom: 20rpx;
+	animation: skeleton-loading 1.4s infinite;
+}
+
+@keyframes skeleton-loading {
+	0% {
+		background-position: 100% 50%;
+	}
+	100% {
+		background-position: 0 50%;
+	}
+}
+</style> 

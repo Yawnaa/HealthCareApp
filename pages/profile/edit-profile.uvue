@@ -1,0 +1,614 @@
+<template>
+	<view class="container">
+		<!-- 导航栏 -->
+		<view class="nav-bar">
+<<<<<<< HEAD
+			<view class="nav-left" @click="handleBack">
+=======
+			<view class="nav-left" @tap="handleBack">
+>>>>>>> a673eed6f587a92e71200540c14c3c62dd06cbc5
+				<text class="nav-icon">&#xe679;</text>
+				<text class="nav-text">返回</text>
+			</view>
+			<text class="nav-title">编辑资料</text>
+<<<<<<< HEAD
+			<view class="nav-right" @click="handleSave">
+=======
+			<view class="nav-right" @tap="handleSave">
+>>>>>>> a673eed6f587a92e71200540c14c3c62dd06cbc5
+				<text class="nav-text">保存</text>
+			</view>
+		</view>
+
+		<!-- 头像编辑 -->
+		<view class="avatar-section">
+<<<<<<< HEAD
+			<view class="avatar-wrapper" @click="handleEditAvatar">
+=======
+			<view class="avatar-wrapper" @tap="handleEditAvatar">
+>>>>>>> a673eed6f587a92e71200540c14c3c62dd06cbc5
+				<image :src="formData.avatar || '/static/icons/default-avatar.png'" class="avatar" mode="aspectFill"></image>
+				<view class="edit-hint">
+					<text class="edit-icon">&#xe6a3;</text>
+					<text class="edit-text">更换头像</text>
+				</view>
+			</view>
+		</view>
+
+		<!-- 表单区域 -->
+		<view class="form-section">
+			<view class="form-group">
+				<view class="form-item">
+					<text class="form-label">昵称</text>
+					<input class="form-input" v-model="formData.nickname" placeholder="请输入昵称" maxlength="20" />
+				</view>
+				<view class="form-item">
+					<text class="form-label">手机号</text>
+					<input class="form-input" v-model="formData.phone" placeholder="请输入手机号" maxlength="11" />
+				</view>
+				<view class="form-item">
+					<text class="form-label">微信号</text>
+					<input class="form-input" v-model="formData.wechatId" placeholder="请输入微信号" maxlength="30" />
+				</view>
+			</view>
+
+			<view class="form-group">
+				<view class="form-item">
+					<text class="form-label">性别</text>
+					<view class="gender-select">
+						<view class="gender-option" 
+							:class="{'active': formData.gender === 1}"
+<<<<<<< HEAD
+							@click="formData.gender = 1">
+=======
+							@tap="formData.gender = 1">
+>>>>>>> a673eed6f587a92e71200540c14c3c62dd06cbc5
+							<text class="gender-icon">&#xe6a4;</text>
+							<text class="gender-text">男</text>
+						</view>
+						<view class="gender-option"
+							:class="{'active': formData.gender === 2}"
+<<<<<<< HEAD
+							@click="formData.gender = 2">
+=======
+							@tap="formData.gender = 2">
+>>>>>>> a673eed6f587a92e71200540c14c3c62dd06cbc5
+							<text class="gender-icon">&#xe6a5;</text>
+							<text class="gender-text">女</text>
+						</view>
+					</view>
+				</view>
+				<view class="form-item">
+					<text class="form-label">生日</text>
+					<picker mode="date" :value="formData.birthday" @change="handleBirthdayChange">
+						<view class="picker-value">
+							<text>{{ formData.birthday || '请选择生日' }}</text>
+							<text class="arrow">></text>
+						</view>
+					</picker>
+				</view>
+				<view class="form-item">
+					<text class="form-label">所在地</text>
+					<picker mode="region" :value="formData.location" @change="handleLocationChange">
+						<view class="picker-value">
+							<text>{{ formData.location.join(' ') || '请选择所在地' }}</text>
+							<text class="arrow">></text>
+						</view>
+					</picker>
+				</view>
+			</view>
+
+			<view class="form-group">
+				<view class="form-item">
+					<text class="form-label">个人简介</text>
+					<textarea class="form-textarea" 
+						v-model="formData.bio" 
+						placeholder="请输入个人简介" 
+						maxlength="200"
+						:show-confirm-bar="false"></textarea>
+				</view>
+			</view>
+		</view>
+	</view>
+</template>
+
+<<<<<<< HEAD
+<script setup lang="ts">
+import { ref, onMounted } from 'vue'
+
+// 表单数据
+const formData = ref({
+	avatar: '',
+	nickname: '',
+	phone: '',
+	wechatId: '',
+	gender: 1,
+	birthday: '',
+	location: [] as string[],
+	bio: ''
+})
+
+// 加载状态
+const loading = ref(false)
+
+// 获取用户信息
+const getUserInfo = async () => {
+	try {
+		const res = await uni.request({
+			url: '/user/info'
+		})
+		formData.value = {
+			...formData.value,
+			...res.data
+		}
+	} catch (err) {
+		console.error('获取用户信息失败：', err)
+		uni.showToast({
+			title: '获取用户信息失败',
+			icon: 'none'
+		})
+	}
+}
+
+// 返回上一页
+const handleBack = () => {
+	uni.navigateBack({
+		fail: () => {
+			uni.switchTab({
+				url: '/pages/profile/profile'
+			})
+		}
+	})
+}
+
+// 表单验证
+const validateForm = () => {
+	if (!formData.value.nickname.trim()) {
+		uni.showToast({
+			title: '请输入昵称',
+			icon: 'none'
+		})
+		return false
+	}
+	
+	if (!formData.value.phone.trim()) {
+		uni.showToast({
+			title: '请输入手机号',
+			icon: 'none'
+		})
+		return false
+	}
+	
+	if (!/^1[3-9]\d{9}$/.test(formData.value.phone)) {
+		uni.showToast({
+			title: '请输入正确的手机号',
+			icon: 'none'
+		})
+		return false
+	}
+	
+	return true
+}
+
+// 保存信息
+const handleSave = async () => {
+	if (loading.value) return
+	
+	if (!validateForm()) return
+	
+	loading.value = true
+	try {
+		await uni.request({
+			url: '/user/update',
+			method: 'POST',
+			data: formData.value
+		})
+		
+		uni.showToast({
+			title: '保存成功',
+			icon: 'success'
+		})
+		
+		setTimeout(() => {
+			handleBack()
+		}, 1500)
+	} catch (err) {
+		console.error('保存失败：', err)
+		uni.showToast({
+			title: '保存失败',
+			icon: 'none'
+		})
+	} finally {
+		loading.value = false
+	}
+}
+
+// 编辑头像
+const handleEditAvatar = () => {
+	uni.chooseImage({
+		count: 1,
+		success: (res) => {
+			const tempFilePath = res.tempFilePaths[0]
+			uni.uploadFile({
+				url: '/api/upload/avatar',
+				filePath: tempFilePath,
+				name: 'avatar',
+				success: (uploadRes) => {
+					const data = JSON.parse(uploadRes.data)
+					formData.value.avatar = data.url
+					uni.showToast({
+						title: '头像更新成功',
+						icon: 'success'
+					})
+				},
+				fail: (err) => {
+					console.error('上传头像失败：', err)
+					uni.showToast({
+						title: '上传失败',
+						icon: 'none'
+					})
+				}
+			})
+		}
+	})
+}
+
+// 生日选择
+const handleBirthdayChange = (e: any) => {
+	formData.value.birthday = e.detail.value
+}
+
+// 地区选择
+const handleLocationChange = (e: any) => {
+	formData.value.location = e.detail.value
+}
+
+// 页面加载
+onMounted(() => {
+	getUserInfo()
+})
+</script>
+
+<style>
+/* 使用CSS变量定义主题颜色和尺寸 */
+page {
+=======
+<script>
+const app = getApp()
+
+export default {
+	data() {
+		return {
+			formData: {
+				avatar: '',
+				nickname: '',
+				phone: '',
+				wechatId: '',
+				gender: 1,
+				birthday: '',
+				location: [],
+				bio: ''
+			},
+			loading: false
+		}
+	},
+
+	onLoad() {
+		this.getUserInfo()
+	},
+
+	// 获取用户信息
+	getUserInfo() {
+		app.vm?.request({
+			url: '/user/info'
+		}).then(res => {
+			this.formData = {
+				...this.formData,
+				...res
+			}
+		}).catch(err => {
+			console.error('获取用户信息失败：', err)
+			uni.showToast({
+				title: '获取用户信息失败',
+				icon: 'none'
+			})
+		})
+	},
+
+	// 返回上一页
+	handleBack() {
+		uni.navigateBack({
+			fail: () => {
+				uni.switchTab({
+					url: '/pages/profile/profile'
+				})
+			}
+		})
+	},
+
+	// 保存信息
+	handleSave() {
+		if (this.loading) return
+		
+		// 表单验证
+		if (!this.validateForm()) return
+		
+		this.loading = true
+		app.vm?.request({
+			url: '/user/update',
+			method: 'POST',
+			data: this.formData
+		}).then(() => {
+			uni.showToast({
+				title: '保存成功',
+				icon: 'success'
+			})
+			setTimeout(() => {
+				this.handleBack()
+			}, 1500)
+		}).catch(err => {
+			console.error('保存失败：', err)
+			uni.showToast({
+				title: '保存失败',
+				icon: 'none'
+			})
+		}).finally(() => {
+			this.loading = false
+		})
+	},
+
+	// 表单验证
+	validateForm() {
+		if (!this.formData.nickname.trim()) {
+			uni.showToast({
+				title: '请输入昵称',
+				icon: 'none'
+			})
+			return false
+		}
+		
+		if (!this.formData.phone.trim()) {
+			uni.showToast({
+				title: '请输入手机号',
+				icon: 'none'
+			})
+			return false
+		}
+		
+		if (!/^1[3-9]\d{9}$/.test(this.formData.phone)) {
+			uni.showToast({
+				title: '请输入正确的手机号',
+				icon: 'none'
+			})
+			return false
+		}
+		
+		return true
+	},
+
+	// 编辑头像
+	handleEditAvatar() {
+		uni.chooseImage({
+			count: 1,
+			success: (res) => {
+				const tempFilePath = res.tempFilePaths[0]
+				uni.uploadFile({
+					url: '/api/upload/avatar',
+					filePath: tempFilePath,
+					name: 'avatar',
+					success: (uploadRes) => {
+						const data = JSON.parse(uploadRes.data)
+						this.formData.avatar = data.url
+						uni.showToast({
+							title: '头像更新成功',
+							icon: 'success'
+						})
+					},
+					fail: (err) => {
+						console.error('上传头像失败：', err)
+						uni.showToast({
+							title: '上传失败',
+							icon: 'none'
+						})
+					}
+				})
+			}
+		})
+	},
+
+	// 生日选择
+	handleBirthdayChange(e) {
+		this.formData.birthday = e.detail.value
+	},
+
+	// 地区选择
+	handleLocationChange(e) {
+		this.formData.location = e.detail.value
+	}
+}
+</script>
+
+<style>
+:root {
+>>>>>>> a673eed6f587a92e71200540c14c3c62dd06cbc5
+	--primary-color: #4A90E2;
+	--primary-text: #333;
+	--secondary-text: #666;
+	--divider-color: #eee;
+	--active-bg: #f9f9f9;
+	--border-radius: 16rpx;
+	--line-height: calc(1em + 8rpx);
+}
+
+.container {
+	min-height: 100vh;
+	background-color: #f5f5f5;
+	padding-bottom: env(safe-area-inset-bottom);
+}
+
+/* 导航栏样式 */
+.nav-bar {
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	height: 88rpx;
+	background-color: #fff;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 0 30rpx;
+	padding-top: env(safe-area-inset-top);
+	z-index: 100;
+}
+
+.nav-left {
+	display: flex;
+	align-items: center;
+}
+
+.nav-icon {
+	font-size: 36rpx;
+	color: var(--primary-text);
+	margin-right: 8rpx;
+}
+
+.nav-title {
+	font-size: 32rpx;
+	font-weight: bold;
+	color: var(--primary-text);
+}
+
+.nav-text {
+	font-size: 28rpx;
+	color: var(--primary-color);
+}
+
+/* 头像区域样式 */
+.avatar-section {
+	padding: 60rpx 30rpx;
+	padding-top: calc(88rpx + env(safe-area-inset-top) + 60rpx);
+	background-color: #fff;
+}
+
+.avatar-wrapper {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+
+.avatar {
+	width: 160rpx;
+	height: 160rpx;
+	border-radius: 80rpx;
+	border: 4rpx solid var(--primary-color);
+	margin-bottom: 20rpx;
+}
+
+.edit-hint {
+	display: flex;
+	align-items: center;
+}
+
+.edit-icon {
+	font-size: 28rpx;
+	color: var(--secondary-text);
+	margin-right: 8rpx;
+}
+
+.edit-text {
+	font-size: 28rpx;
+	color: var(--secondary-text);
+}
+
+/* 表单区域样式 */
+.form-section {
+	padding: 20rpx;
+}
+
+.form-group {
+	background-color: #fff;
+	border-radius: var(--border-radius);
+	margin-bottom: 20rpx;
+	overflow: hidden;
+}
+
+.form-item {
+	display: flex;
+	align-items: center;
+	min-height: 100rpx;
+	padding: 0 30rpx;
+	border-bottom: 1rpx solid var(--divider-color);
+}
+
+.form-item:last-child {
+	border-bottom: none;
+}
+
+.form-label {
+	width: 160rpx;
+	font-size: 30rpx;
+	color: var(--primary-text);
+}
+
+.form-input {
+	flex: 1;
+	font-size: 30rpx;
+	color: var(--primary-text);
+}
+
+.form-textarea {
+	flex: 1;
+	height: 200rpx;
+	font-size: 30rpx;
+	color: var(--primary-text);
+	padding: 20rpx 0;
+}
+
+/* 性别选择样式 */
+.gender-select {
+	display: flex;
+	gap: 40rpx;
+}
+
+.gender-option {
+	display: flex;
+	align-items: center;
+	padding: 10rpx 20rpx;
+	border-radius: 30rpx;
+	background-color: var(--active-bg);
+}
+
+.gender-option.active {
+	background-color: var(--primary-color);
+}
+
+.gender-icon {
+	font-size: 32rpx;
+	margin-right: 8rpx;
+}
+
+.gender-text {
+	font-size: 28rpx;
+}
+
+.gender-option.active .gender-icon,
+.gender-option.active .gender-text {
+	color: #fff;
+}
+
+/* 选择器样式 */
+.picker-value {
+	flex: 1;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	font-size: 30rpx;
+	color: var(--primary-text);
+}
+
+.arrow {
+	font-size: 30rpx;
+	color: var(--secondary-text);
+}
+</style> 

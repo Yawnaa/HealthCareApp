@@ -1,0 +1,45 @@
+{
+  "pages": [
+    "pages/login/login",
+    "pages/register/register",
+    "pages/index/index",
+    "pages/profile/profile",
+    "pages/profile/edit-profile",
+    "pages/exercise/exercise",
+    "pages/ai-doctor/ai-doctor",
+    "pages/health-test/health-test"
+  ],
+  "window": {
+    "navigationBarTextStyle": "black",
+    "navigationBarTitleText": "健康生活",
+    "navigationBarBackgroundColor": "#F5F9FF",
+    "backgroundColor": "#F5F9FF"
+  },
+  "tabBar": {
+    "color": "#999999",
+    "selectedColor": "#4A90E2",
+    "backgroundColor": "#ffffff",
+    "borderStyle": "black",
+    "list": [
+      {
+        "pagePath": "pages/index/index",
+        "text": "打卡",
+        "iconPath": "static/icons/home.png",
+        "selectedIconPath": "static/icons/home-active.png"
+      },
+      {
+        "pagePath": "pages/health-test/health-test",
+        "text": "健康自测",
+        "iconPath": "static/icons/test.png",
+        "selectedIconPath": "static/icons/test-active.png"
+      },
+      {
+        "pagePath": "pages/profile/profile",
+        "text": "我的",
+        "iconPath": "static/icons/profile.png",
+        "selectedIconPath": "static/icons/profile-active.png"
+      }
+    ]
+  },
+  "usingComponents": {}
+}

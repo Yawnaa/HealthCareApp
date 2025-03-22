@@ -1,0 +1,812 @@
+<<<<<<< HEAD
+<template>
+	<view class="container">
+		<!-- 顶部进度 -->
+		<view class="progress-bar">
+			<view class="progress" :style="{ width: `${(currentStep / totalSteps) * 100}%` }"></view>
+			<text class="progress-text">第 {{ currentStep }}/{{ totalSteps }} 步</text>
+		</view>
+
+		<!-- 问卷内容 -->
+		<scroll-view class="question-container" scroll-y="true">
+			<view class="question-section" v-if="currentStep === 1">
+				<view class="section-title">基础信息</view>
+				<view class="form-item">
+					<text class="label">年龄</text>
+					<input type="number" v-model="basicInfo.age" class="input" placeholder="请输入年龄" />
+				</view>
+				<view class="form-item">
+					<text class="label">性别</text>
+					<radio-group class="radio-group" @change="onGenderChange">
+						<label class="radio-label">
+							<radio value="male" :checked="basicInfo.gender === 'male'" />
+							<text>男</text>
+						</label>
+						<label class="radio-label">
+							<radio value="female" :checked="basicInfo.gender === 'female'" />
+							<text>女</text>
+						</label>
+					</radio-group>
+				</view>
+				<view class="form-item">
+					<text class="label">身高(cm)</text>
+					<input type="number" v-model="basicInfo.height" class="input" placeholder="请输入身高" />
+				</view>
+				<view class="form-item">
+					<text class="label">体重(kg)</text>
+					<input type="number" v-model="basicInfo.weight" class="input" placeholder="请输入体重" />
+				</view>
+			</view>
+
+			<view class="question-section" v-if="currentStep === 2">
+				<view class="section-title">生活习惯</view>
+				<view class="question-item" v-for="(question, index) in lifestyleQuestions" :key="index">
+					<text class="question-text">{{ question.text }}</text>
+					<radio-group class="radio-group" @change="(e) => onLifestyleChange(index, e)">
+						<label class="radio-label" v-for="(option, optIndex) in question.options" :key="optIndex">
+							<radio :value="String(optIndex)" :checked="question.answer === optIndex" />
+							<text>{{ option }}</text>
+						</label>
+					</radio-group>
+				</view>
+			</view>
+
+			<view class="question-section" v-if="currentStep === 3">
+				<view class="section-title">心理健康</view>
+				<view class="question-item" v-for="(question, index) in mentalHealthQuestions" :key="index">
+					<text class="question-text">{{ question.text }}</text>
+					<radio-group class="radio-group" @change="(e) => onMentalHealthChange(index, e)">
+						<label class="radio-label" v-for="(option, optIndex) in question.options" :key="optIndex">
+							<radio :value="String(optIndex)" :checked="question.answer === optIndex" />
+							<text>{{ option }}</text>
+						</label>
+					</radio-group>
+				</view>
+			</view>
+
+			<view class="question-section" v-if="currentStep === 4">
+				<view class="section-title">评估结果</view>
+				<view class="result-card">
+					<view class="result-item">
+						<text class="result-label">BMI指数</text>
+						<text class="result-value">{{ calculateBMI() }}</text>
+					</view>
+					<view class="result-item">
+						<text class="result-label">生活习惯评分</text>
+						<text class="result-value">{{ calculateLifestyleScore() }}</text>
+					</view>
+					<view class="result-item">
+						<text class="result-label">心理健康评分</text>
+						<text class="result-value">{{ calculateMentalHealthScore() }}</text>
+					</view>
+					<view class="suggestion-box">
+						<text class="suggestion-title">健康建议</text>
+						<text class="suggestion-text">{{ generateSuggestion() }}</text>
+					</view>
+				</view>
+			</view>
+		</scroll-view>
+
+		<!-- 底部按钮 -->
+		<view class="bottom-buttons">
+			<button class="btn prev-btn" v-if="currentStep > 1" @click="prevStep">上一步</button>
+			<button class="btn next-btn" v-if="currentStep < totalSteps" @click="nextStep">下一步</button>
+			<button class="btn submit-btn" v-if="currentStep === totalSteps" @click="submitTest">提交评估</button>
+		</view>
+	</view>
+</template>
+
+<script setup lang="uts">
+import { ref, computed } from 'vue'
+
+// 基础信息
+const basicInfo = ref({
+	age: '',
+	gender: '',
+	height: '',
+	weight: ''
+})
+
+// 生活习惯问题
+const lifestyleQuestions = ref([
+	{
+		text: '您每天的睡眠时间是多少？',
+		options: ['少于6小时', '6-8小时', '8-10小时', '超过10小时'],
+		answer: -1
+	},
+	{
+		text: '您每周运动频率如何？',
+		options: ['从不运动', '1-2次', '3-4次', '5次以上'],
+		answer: -1
+	},
+	{
+		text: '您的饮食习惯如何？',
+		options: ['不规律', '基本规律', '非常规律', '严格规律'],
+		answer: -1
+	}
+])
+
+// 心理健康问题
+const mentalHealthQuestions = ref([
+	{
+		text: '您最近的情绪状态如何？',
+		options: ['经常焦虑', '偶尔焦虑', '基本稳定', '非常愉悦'],
+		answer: -1
+	},
+	{
+		text: '您的工作压力如何？',
+		options: ['压力很大', '压力较大', '压力适中', '压力较小'],
+		answer: -1
+	},
+	{
+		text: '您的人际关系如何？',
+		options: ['关系紧张', '关系一般', '关系良好', '关系融洽'],
+		answer: -1
+	}
+])
+
+// 步骤控制
+const currentStep = ref(1)
+const totalSteps = 4
+
+// 性别选择
+const onGenderChange = (e: any) => {
+	basicInfo.value.gender = e.detail.value
+}
+
+// 生活习惯选择
+const onLifestyleChange = (index: number, e: any) => {
+	lifestyleQuestions.value[index].answer = Number(e.detail.value)
+}
+
+// 心理健康选择
+const onMentalHealthChange = (index: number, e: any) => {
+	mentalHealthQuestions.value[index].answer = Number(e.detail.value)
+}
+
+// 步骤切换
+const prevStep = () => {
+	if (currentStep.value > 1) {
+		currentStep.value--
+	}
+}
+
+const nextStep = () => {
+	if (currentStep.value < totalSteps) {
+		currentStep.value++
+	}
+}
+
+// 计算BMI
+const calculateBMI = () => {
+	if (!basicInfo.value.height || !basicInfo.value.weight) return '--'
+	const height = Number(basicInfo.value.height) / 100
+	const weight = Number(basicInfo.value.weight)
+	const bmi = weight / (height * height)
+	return bmi.toFixed(1)
+}
+
+// 计算生活习惯评分
+const calculateLifestyleScore = () => {
+	const total = lifestyleQuestions.value.reduce((sum, q) => sum + (q.answer >= 0 ? q.answer : 0), 0)
+	return Math.round((total / (lifestyleQuestions.value.length * 3)) * 100)
+}
+
+// 计算心理健康评分
+const calculateMentalHealthScore = () => {
+	const total = mentalHealthQuestions.value.reduce((sum, q) => sum + (q.answer >= 0 ? q.answer : 0), 0)
+	return Math.round((total / (mentalHealthQuestions.value.length * 3)) * 100)
+}
+
+// 生成健康建议
+const generateSuggestion = () => {
+	const bmi = Number(calculateBMI())
+	const lifestyleScore = calculateLifestyleScore()
+	const mentalHealthScore = calculateMentalHealthScore()
+	
+	let suggestions = []
+	
+	if (bmi < 18.5) {
+		suggestions.push('您的体重偏轻，建议适当增加营养摄入，保持均衡饮食。')
+	} else if (bmi > 24) {
+		suggestions.push('您的体重偏重，建议控制饮食，增加运动量。')
+	}
+	
+	if (lifestyleScore < 60) {
+		suggestions.push('您的生活习惯需要改善，建议保持规律作息，适量运动。')
+	}
+	
+	if (mentalHealthScore < 60) {
+		suggestions.push('您的心理状态需要关注，建议适当放松，保持积极心态。')
+	}
+	
+	return suggestions.length > 0 ? suggestions.join('\n') : '您的健康状况良好，请继续保持！'
+}
+
+// 提交评估
+const submitTest = () => {
+	uni.showLoading({
+		title: '提交中...'
+	})
+	
+	setTimeout(() => {
+		uni.hideLoading()
+		uni.showToast({
+			title: '评估完成',
+			icon: 'success'
+		})
+	}, 1500)
+}
+</script>
+
+<style>
+.container {
+	min-height: 100vh;
+	background-color: #F5F9FF;
+	display: flex;
+	flex-direction: column;
+}
+
+.progress-bar {
+	height: 6rpx;
+	background-color: #eee;
+	position: relative;
+	margin-bottom: 20rpx;
+}
+
+.progress {
+	height: 100%;
+	background-color: #4A90E2;
+	transition: width 0.3s;
+}
+
+.progress-text {
+	position: absolute;
+	right: 30rpx;
+	top: -30rpx;
+	font-size: 24rpx;
+	color: #666;
+}
+
+.question-container {
+	flex: 1;
+	padding: 30rpx;
+}
+
+.question-section {
+	background-color: #fff;
+	border-radius: 24rpx;
+	padding: 30rpx;
+	margin-bottom: 30rpx;
+	box-shadow: 0 4rpx 16rpx rgba(74, 144, 226, 0.1);
+}
+
+.section-title {
+	font-size: 32rpx;
+	font-weight: bold;
+	color: #333;
+	margin-bottom: 30rpx;
+}
+
+.form-item {
+	margin-bottom: 30rpx;
+}
+
+.label {
+	font-size: 28rpx;
+	color: #666;
+	margin-bottom: 10rpx;
+	display: block;
+}
+
+.input {
+	width: 100%;
+	height: 80rpx;
+	background-color: #f8f8f8;
+	border-radius: 12rpx;
+	padding: 0 20rpx;
+	font-size: 28rpx;
+}
+
+.radio-group {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 20rpx;
+}
+
+.radio-label {
+	display: flex;
+	align-items: center;
+	font-size: 28rpx;
+	color: #333;
+}
+
+.question-item {
+	margin-bottom: 40rpx;
+}
+
+.question-text {
+	font-size: 28rpx;
+	color: #333;
+	margin-bottom: 20rpx;
+	display: block;
+}
+
+.result-card {
+	background-color: #f8f8f8;
+	border-radius: 16rpx;
+	padding: 30rpx;
+}
+
+.result-item {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: 20rpx;
+}
+
+.result-label {
+	font-size: 28rpx;
+	color: #666;
+}
+
+.result-value {
+	font-size: 32rpx;
+	color: #4A90E2;
+	font-weight: bold;
+}
+
+.suggestion-box {
+	margin-top: 30rpx;
+	padding-top: 20rpx;
+	border-top: 1rpx solid #eee;
+}
+
+.suggestion-title {
+	font-size: 28rpx;
+	color: #333;
+	font-weight: bold;
+	margin-bottom: 10rpx;
+	display: block;
+}
+
+.suggestion-text {
+	font-size: 26rpx;
+	color: #666;
+	line-height: 1.6;
+}
+
+.bottom-buttons {
+	padding: 30rpx;
+	display: flex;
+	gap: 20rpx;
+	background-color: #fff;
+	box-shadow: 0 -2rpx 10rpx rgba(0, 0, 0, 0.05);
+}
+
+.btn {
+	flex: 1;
+	height: 88rpx;
+	border-radius: 44rpx;
+	font-size: 32rpx;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.prev-btn {
+	background-color: #f8f8f8;
+	color: #666;
+}
+
+.next-btn, .submit-btn {
+	background-color: #4A90E2;
+	color: #fff;
+}
+=======
+<template>
+	<view class="container">
+		<!-- 顶部进度 -->
+		<view class="progress-bar">
+			<view class="progress" :style="{ width: `${(currentStep / totalSteps) * 100}%` }"></view>
+			<text class="progress-text">第 {{ currentStep }}/{{ totalSteps }} 步</text>
+		</view>
+
+		<!-- 问卷内容 -->
+		<scroll-view class="question-container" scroll-y="true">
+			<view class="question-section" v-if="currentStep === 1">
+				<view class="section-title">基础信息</view>
+				<view class="form-item">
+					<text class="label">年龄</text>
+					<input type="number" v-model="basicInfo.age" class="input" placeholder="请输入年龄" />
+				</view>
+				<view class="form-item">
+					<text class="label">性别</text>
+					<radio-group class="radio-group" @change="onGenderChange">
+						<label class="radio-label">
+							<radio value="male" :checked="basicInfo.gender === 'male'" />
+							<text>男</text>
+						</label>
+						<label class="radio-label">
+							<radio value="female" :checked="basicInfo.gender === 'female'" />
+							<text>女</text>
+						</label>
+					</radio-group>
+				</view>
+				<view class="form-item">
+					<text class="label">身高(cm)</text>
+					<input type="number" v-model="basicInfo.height" class="input" placeholder="请输入身高" />
+				</view>
+				<view class="form-item">
+					<text class="label">体重(kg)</text>
+					<input type="number" v-model="basicInfo.weight" class="input" placeholder="请输入体重" />
+				</view>
+			</view>
+
+			<view class="question-section" v-if="currentStep === 2">
+				<view class="section-title">生活习惯</view>
+				<view class="question-item" v-for="(question, index) in lifestyleQuestions" :key="index">
+					<text class="question-text">{{ question.text }}</text>
+					<radio-group class="radio-group" @change="(e) => onLifestyleChange(index, e)">
+						<label class="radio-label" v-for="(option, optIndex) in question.options" :key="optIndex">
+							<radio :value="String(optIndex)" :checked="question.answer === optIndex" />
+							<text>{{ option }}</text>
+						</label>
+					</radio-group>
+				</view>
+			</view>
+
+			<view class="question-section" v-if="currentStep === 3">
+				<view class="section-title">心理健康</view>
+				<view class="question-item" v-for="(question, index) in mentalHealthQuestions" :key="index">
+					<text class="question-text">{{ question.text }}</text>
+					<radio-group class="radio-group" @change="(e) => onMentalHealthChange(index, e)">
+						<label class="radio-label" v-for="(option, optIndex) in question.options" :key="optIndex">
+							<radio :value="String(optIndex)" :checked="question.answer === optIndex" />
+							<text>{{ option }}</text>
+						</label>
+					</radio-group>
+				</view>
+			</view>
+
+			<view class="question-section" v-if="currentStep === 4">
+				<view class="section-title">评估结果</view>
+				<view class="result-card">
+					<view class="result-item">
+						<text class="result-label">BMI指数</text>
+						<text class="result-value">{{ calculateBMI() }}</text>
+					</view>
+					<view class="result-item">
+						<text class="result-label">生活习惯评分</text>
+						<text class="result-value">{{ calculateLifestyleScore() }}</text>
+					</view>
+					<view class="result-item">
+						<text class="result-label">心理健康评分</text>
+						<text class="result-value">{{ calculateMentalHealthScore() }}</text>
+					</view>
+					<view class="suggestion-box">
+						<text class="suggestion-title">健康建议</text>
+						<text class="suggestion-text">{{ generateSuggestion() }}</text>
+					</view>
+				</view>
+			</view>
+		</scroll-view>
+
+		<!-- 底部按钮 -->
+		<view class="bottom-buttons">
+			<button class="btn prev-btn" v-if="currentStep > 1" @click="prevStep">上一步</button>
+			<button class="btn next-btn" v-if="currentStep < totalSteps" @click="nextStep">下一步</button>
+			<button class="btn submit-btn" v-if="currentStep === totalSteps" @click="submitTest">提交评估</button>
+		</view>
+	</view>
+</template>
+
+<script setup lang="uts">
+import { ref, computed } from 'vue'
+
+// 基础信息
+const basicInfo = ref({
+	age: '',
+	gender: '',
+	height: '',
+	weight: ''
+})
+
+// 生活习惯问题
+const lifestyleQuestions = ref([
+	{
+		text: '您每天的睡眠时间是多少？',
+		options: ['少于6小时', '6-8小时', '8-10小时', '超过10小时'],
+		answer: -1
+	},
+	{
+		text: '您每周运动频率如何？',
+		options: ['从不运动', '1-2次', '3-4次', '5次以上'],
+		answer: -1
+	},
+	{
+		text: '您的饮食习惯如何？',
+		options: ['不规律', '基本规律', '非常规律', '严格规律'],
+		answer: -1
+	}
+])
+
+// 心理健康问题
+const mentalHealthQuestions = ref([
+	{
+		text: '您最近的情绪状态如何？',
+		options: ['经常焦虑', '偶尔焦虑', '基本稳定', '非常愉悦'],
+		answer: -1
+	},
+	{
+		text: '您的工作压力如何？',
+		options: ['压力很大', '压力较大', '压力适中', '压力较小'],
+		answer: -1
+	},
+	{
+		text: '您的人际关系如何？',
+		options: ['关系紧张', '关系一般', '关系良好', '关系融洽'],
+		answer: -1
+	}
+])
+
+// 步骤控制
+const currentStep = ref(1)
+const totalSteps = 4
+
+// 性别选择
+const onGenderChange = (e: any) => {
+	basicInfo.value.gender = e.detail.value
+}
+
+// 生活习惯选择
+const onLifestyleChange = (index: number, e: any) => {
+	lifestyleQuestions.value[index].answer = Number(e.detail.value)
+}
+
+// 心理健康选择
+const onMentalHealthChange = (index: number, e: any) => {
+	mentalHealthQuestions.value[index].answer = Number(e.detail.value)
+}
+
+// 步骤切换
+const prevStep = () => {
+	if (currentStep.value > 1) {
+		currentStep.value--
+	}
+}
+
+const nextStep = () => {
+	if (currentStep.value < totalSteps) {
+		currentStep.value++
+	}
+}
+
+// 计算BMI
+const calculateBMI = () => {
+	if (!basicInfo.value.height || !basicInfo.value.weight) return '--'
+	const height = Number(basicInfo.value.height) / 100
+	const weight = Number(basicInfo.value.weight)
+	const bmi = weight / (height * height)
+	return bmi.toFixed(1)
+}
+
+// 计算生活习惯评分
+const calculateLifestyleScore = () => {
+	const total = lifestyleQuestions.value.reduce((sum, q) => sum + (q.answer >= 0 ? q.answer : 0), 0)
+	return Math.round((total / (lifestyleQuestions.value.length * 3)) * 100)
+}
+
+// 计算心理健康评分
+const calculateMentalHealthScore = () => {
+	const total = mentalHealthQuestions.value.reduce((sum, q) => sum + (q.answer >= 0 ? q.answer : 0), 0)
+	return Math.round((total / (mentalHealthQuestions.value.length * 3)) * 100)
+}
+
+// 生成健康建议
+const generateSuggestion = () => {
+	const bmi = Number(calculateBMI())
+	const lifestyleScore = calculateLifestyleScore()
+	const mentalHealthScore = calculateMentalHealthScore()
+	
+	let suggestions = []
+	
+	if (bmi < 18.5) {
+		suggestions.push('您的体重偏轻，建议适当增加营养摄入，保持均衡饮食。')
+	} else if (bmi > 24) {
+		suggestions.push('您的体重偏重，建议控制饮食，增加运动量。')
+	}
+	
+	if (lifestyleScore < 60) {
+		suggestions.push('您的生活习惯需要改善，建议保持规律作息，适量运动。')
+	}
+	
+	if (mentalHealthScore < 60) {
+		suggestions.push('您的心理状态需要关注，建议适当放松，保持积极心态。')
+	}
+	
+	return suggestions.length > 0 ? suggestions.join('\n') : '您的健康状况良好，请继续保持！'
+}
+
+// 提交评估
+const submitTest = () => {
+	uni.showLoading({
+		title: '提交中...'
+	})
+	
+	setTimeout(() => {
+		uni.hideLoading()
+		uni.showToast({
+			title: '评估完成',
+			icon: 'success'
+		})
+	}, 1500)
+}
+</script>
+
+<style>
+.container {
+	min-height: 100vh;
+	background-color: #F5F9FF;
+	display: flex;
+	flex-direction: column;
+}
+
+.progress-bar {
+	height: 6rpx;
+	background-color: #eee;
+	position: relative;
+	margin-bottom: 20rpx;
+}
+
+.progress {
+	height: 100%;
+	background-color: #4A90E2;
+	transition: width 0.3s;
+}
+
+.progress-text {
+	position: absolute;
+	right: 30rpx;
+	top: -30rpx;
+	font-size: 24rpx;
+	color: #666;
+}
+
+.question-container {
+	flex: 1;
+	padding: 30rpx;
+}
+
+.question-section {
+	background-color: #fff;
+	border-radius: 24rpx;
+	padding: 30rpx;
+	margin-bottom: 30rpx;
+	box-shadow: 0 4rpx 16rpx rgba(74, 144, 226, 0.1);
+}
+
+.section-title {
+	font-size: 32rpx;
+	font-weight: bold;
+	color: #333;
+	margin-bottom: 30rpx;
+}
+
+.form-item {
+	margin-bottom: 30rpx;
+}
+
+.label {
+	font-size: 28rpx;
+	color: #666;
+	margin-bottom: 10rpx;
+	display: block;
+}
+
+.input {
+	width: 100%;
+	height: 80rpx;
+	background-color: #f8f8f8;
+	border-radius: 12rpx;
+	padding: 0 20rpx;
+	font-size: 28rpx;
+}
+
+.radio-group {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 20rpx;
+}
+
+.radio-label {
+	display: flex;
+	align-items: center;
+	font-size: 28rpx;
+	color: #333;
+}
+
+.question-item {
+	margin-bottom: 40rpx;
+}
+
+.question-text {
+	font-size: 28rpx;
+	color: #333;
+	margin-bottom: 20rpx;
+	display: block;
+}
+
+.result-card {
+	background-color: #f8f8f8;
+	border-radius: 16rpx;
+	padding: 30rpx;
+}
+
+.result-item {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: 20rpx;
+}
+
+.result-label {
+	font-size: 28rpx;
+	color: #666;
+}
+
+.result-value {
+	font-size: 32rpx;
+	color: #4A90E2;
+	font-weight: bold;
+}
+
+.suggestion-box {
+	margin-top: 30rpx;
+	padding-top: 20rpx;
+	border-top: 1rpx solid #eee;
+}
+
+.suggestion-title {
+	font-size: 28rpx;
+	color: #333;
+	font-weight: bold;
+	margin-bottom: 10rpx;
+	display: block;
+}
+
+.suggestion-text {
+	font-size: 26rpx;
+	color: #666;
+	line-height: 1.6;
+}
+
+.bottom-buttons {
+	padding: 30rpx;
+	display: flex;
+	gap: 20rpx;
+	background-color: #fff;
+	box-shadow: 0 -2rpx 10rpx rgba(0, 0, 0, 0.05);
+}
+
+.btn {
+	flex: 1;
+	height: 88rpx;
+	border-radius: 44rpx;
+	font-size: 32rpx;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.prev-btn {
+	background-color: #f8f8f8;
+	color: #666;
+}
+
+.next-btn, .submit-btn {
+	background-color: #4A90E2;
+	color: #fff;
+}
+>>>>>>> a673eed6f587a92e71200540c14c3c62dd06cbc5
+</style> 

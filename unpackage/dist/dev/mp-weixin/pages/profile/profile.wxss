@@ -1,0 +1,221 @@
+@import "../../uvue.wxss";
+:host{display:flex;flex-direction:column}
+
+:root {
+	--primary-color: #4A90E2;
+	--primary-text: #333;
+	--secondary-text: #666;
+	--divider-color: #eee;
+	--active-bg: #f9f9f9;
+	--danger-color: #ff4d4f;
+	--border-radius: 16rpx;
+	--line-height: calc(1em + 8rpx);
+}
+.container {
+	min-height: 100vh;
+	background-color: #f5f5f5;
+	padding-bottom: calc(60rpx + env(safe-area-inset-bottom));
+}
+
+/* 头部区域样式 */
+.header {
+	background-color: #fff;
+	padding: 40rpx 30rpx;
+	margin-bottom: 20rpx;
+}
+.user-info {
+	display: flex;
+	align-items: center;
+}
+.avatar-section {
+	position: relative;
+	margin-right: 30rpx;
+}
+.avatar {
+	width: 120rpx;
+	height: 120rpx;
+	border-radius: 60rpx;
+	border: 4rpx solid var(--primary-color);
+}
+.edit-avatar-hint {
+	position: absolute;
+	bottom: -30rpx;
+	left: 50%;
+	transform: translateX(-50%);
+	font-size: 24rpx;
+	color: var(--secondary-text);
+	white-space: nowrap;
+}
+.info-section {
+	flex: 1;
+}
+.name-row {
+	display: flex;
+	align-items: center;
+	margin-bottom: 10rpx;
+}
+.name {
+	font-size: 36rpx;
+	font-weight: bold;
+	color: var(--primary-text);
+	margin-right: 20rpx;
+}
+.edit-icon {
+	font-size: 24rpx;
+	color: var(--primary-color);
+	padding: 4rpx 12rpx;
+	border: 1rpx solid var(--primary-color);
+	border-radius: 20rpx;
+}
+.phone {
+	font-size: 28rpx;
+	color: var(--secondary-text);
+	margin-bottom: 10rpx;
+}
+.user-tags {
+	display: flex;
+	gap: 10rpx;
+}
+.tag {
+	font-size: 24rpx;
+	color: var(--primary-color);
+	background-color: rgba(74, 144, 226, 0.1);
+	padding: 4rpx 12rpx;
+	border-radius: 20rpx;
+}
+
+/* 健康数据概览 */
+.health-overview {
+	background-color: #fff;
+	padding: 30rpx;
+	margin-bottom: 20rpx;
+	display: flex;
+	justify-content: space-around;
+}
+.overview-item {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+.overview-item .value {
+	font-size: 40rpx;
+	font-weight: bold;
+	color: var(--primary-color);
+	margin-bottom: 8rpx;
+}
+.overview-item .label {
+	font-size: 24rpx;
+	color: var(--secondary-text);
+}
+
+/* 功能列表样式 */
+.menu-list {
+	padding: 0 20rpx;
+}
+.menu-group {
+	background-color: #fff;
+	border-radius: var(--border-radius);
+	margin-bottom: 20rpx;
+	overflow: hidden;
+}
+.menu-item {
+	display: flex;
+	align-items: center;
+	height: 100rpx;
+	padding: 0 30rpx;
+	border-bottom: 1rpx solid var(--divider-color);
+	position: relative;
+	will-change: transform;
+}
+.menu-item:last-child {
+	border-bottom: none;
+}
+.menu-icon {
+	width: 40rpx;
+	height: 40rpx;
+	margin-right: 20rpx;
+}
+.menu-text {
+	flex: 1;
+	font-size: 30rpx;
+	color: var(--primary-text);
+}
+.arrow {
+	font-size: 30rpx;
+	color: var(--secondary-text);
+}
+.menu-item-active {
+	background-color: var(--active-bg);
+	transform: scale(0.98);
+	transition: transform 0.2s ease;
+}
+
+/* 退出按钮样式 */
+.logout-btn {
+	position: fixed;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	height: 100rpx;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background-color: #fff;
+	padding-bottom: env(safe-area-inset-bottom);
+	will-change: opacity;
+}
+.logout-text {
+	font-size: 32rpx;
+	color: var(--danger-color);
+}
+
+/* 骨架屏样式 */
+.skeleton-header {
+	display: flex;
+	align-items: center;
+}
+.skeleton-avatar {
+	width: 120rpx;
+	height: 120rpx;
+	border-radius: 60rpx;
+	background: #f0f0f0;
+	margin-right: 30rpx;
+	animation: skeleton-loading 1.4s infinite;
+}
+.skeleton-info {
+	flex: 1;
+}
+.skeleton-name {
+	width: 200rpx;
+	height: 36rpx;
+	background: #f0f0f0;
+	border-radius: 4rpx;
+	margin-bottom: 20rpx;
+	animation: skeleton-loading 1.4s infinite;
+}
+.skeleton-phone {
+	width: 300rpx;
+	height: 28rpx;
+	background: #f0f0f0;
+	border-radius: 4rpx;
+	animation: skeleton-loading 1.4s infinite;
+}
+.skeleton-menu {
+	padding: 20rpx;
+}
+.skeleton-item {
+	width: 100%;
+	height: 100rpx;
+	background: #f0f0f0;
+	border-radius: 4rpx;
+	margin-bottom: 20rpx;
+	animation: skeleton-loading 1.4s infinite;
+}
+@keyframes skeleton-loading {
+0% {
+		background-position: 100% 50%;
+}
+100% {
+		background-position: 0 50%;
+}
+}
