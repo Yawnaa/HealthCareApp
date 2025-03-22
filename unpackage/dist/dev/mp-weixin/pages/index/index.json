@@ -1,8 +1,0 @@
-{
-  "navigationBarTitleText": "健康打卡",
-  "navigationStyle": "custom",
-  "navigationBarTextStyle": "white",
-  "usingComponents": {
-    "custom-navbar": "../../components/CustomNavbar/CustomNavbar"
-  }
-}

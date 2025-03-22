@@ -1,0 +1,37 @@
+{
+  // 设置工作台图标主题为 vscode-icons
+  "workbench.iconTheme": "vscode-icons",
+  // 在保存时格式化文件
+  "editor.formatOnSave": true,
+  // 文件格式化配置
+  "[json]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  // 控制资源管理器是否应以紧凑形式呈现文件夹。单个子文件夹将被压缩在组合的树元素中。
+  "explorer.compactFolders": false,
+  // 配置 vue 文件的默认格式化工具为 prettier
+  "[vue]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  // 配置 html 文件的默认格式化工具为 prettier
+  "[html]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  // 配置 ts 文件的默认格式化工具为 prettier
+  "[typescript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  // 配置语言的文件关联
+  "files.associations": {
+    "pages.json": "jsonc", // pages.json 可以写注释
+    "manifest.json": "jsonc" // manifest.json 可以写注释
+  },
+  // uniapp 选择创建的模版为 vue3
+  "create-uniapp-view.template": "vue3",
+  // uniapp 创建视图时，文件名与文件夹同名
+  "create-uniapp-view.name": "与文件夹同名",
+  // uniapp 创建视图时，样式使用 scss
+  "create-uniapp-view.style": "scss",
+  // uniapp 创建视图时，样式是否添加 scoped
+  "create-uniapp-view.scoped": false
+}

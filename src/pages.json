@@ -1,0 +1,126 @@
+{
+   // 组件自动导入
+   "easycom": {
+    "autoscan": true,
+    "custom": {
+      // uni-ui 规则如下配置
+      "^uni-(.*)": "@dcloudio/uni-ui/lib/uni-$1/uni-$1.vue"
+    }
+  },
+
+  "pages": [
+    //pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
+    {
+      "path": "pages/index/index",
+      "style": {
+        "navigationStyle": "custom", // 隐藏默认导航
+        "navigationBarTextStyle": "white",
+        "navigationBarTitleText": "首页"
+      }
+    },
+    {
+      "path": "pages/my/my",
+      "style": {
+        "navigationStyle": "custom", // 隐藏默认导航
+        "navigationBarTitleText": "我的",
+        "navigationBarTextStyle": "black"
+      }
+    },
+    {
+      "path": "pages/cart/cart",
+      "style": {
+        "navigationBarTitleText": "购物车",
+        "navigationBarTextStyle": "black"
+      }
+    },
+    {
+      "path": "pages/category/category",
+      "style": {
+        "navigationBarTitleText": "健康自测",
+        "navigationBarTextStyle": "black"
+      }
+    },
+    {
+      "path": "pages/login/login",
+      "style": {
+        "navigationBarTitleText": "登录",
+        "navigationBarTextStyle": "black"
+      }
+    },
+    {
+      "path": "pages/check-in/breakfast",
+      "style": {
+        "navigationBarTitleText": "早餐打卡",
+        "navigationBarTextStyle": "black"
+      }
+    },
+    {
+      "path": "pages/check-in/lunch",
+      "style": {
+        "navigationBarTitleText": "午餐打卡",
+        "navigationBarTextStyle": "black"
+      }
+    },
+    {
+      "path": "pages/check-in/dinner",
+      "style": {
+        "navigationBarTitleText": "晚餐打卡",
+        "navigationBarTextStyle": "black"
+      }
+    },
+    {
+      "path": "pages/check-in/exercise",
+      "style": {
+        "navigationBarTitleText": "运动打卡",
+        "navigationBarTextStyle": "black"
+      }
+    },
+    {
+      "path": "pages/my/profile-edit",
+      "style": {
+        "navigationBarTitleText": "编辑个人信息",
+        "navigationBarTextStyle": "black",
+        "navigationBarBackgroundColor": "#ffffff"
+      }
+    }
+  ],
+  "globalStyle": {
+    "navigationBarTextStyle": "black",
+    "navigationBarTitleText": "",
+    "navigationBarBackgroundColor": "#F8F8F8",
+    "backgroundColor": "#F8F8F8"
+  },
+  // 设置 TabBar
+  "tabBar": {
+    "color": "#999999",
+    "selectedColor": "#27ba9b",
+    "backgroundColor": "#ffffff",
+    "borderStyle": "black",
+    "list": [
+      {
+        "text": "首页",
+        "pagePath": "pages/index/index",
+        "iconPath": "static/tabs/home_default.png",
+        "selectedIconPath": "static/tabs/home_selected.png"
+      },
+      {
+        "text": "分类",
+        "pagePath": "pages/category/category",
+        "iconPath": "static/tabs/category_default.png",
+        "selectedIconPath": "static/tabs/category_selected.png"
+      },
+      {
+        "text": "购物车",
+        "pagePath": "pages/cart/cart",
+        "iconPath": "static/tabs/cart_default.png",
+        "selectedIconPath": "static/tabs/cart_selected.png"
+      },
+      {
+        "text": "我的",
+        "pagePath": "pages/my/my",
+        "iconPath": "static/tabs/user_default.png",
+        "selectedIconPath": "static/tabs/user_selected.png"
+      }
+    ]
+  }
+}
