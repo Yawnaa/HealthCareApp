@@ -4,11 +4,9 @@
 
 HealthCare体系包含五个端：微信小程序端，H5 端，App 端，PC 端，管理后台。
 
+本项目用于学习vue3+Typescript+uniapp，适用于初学者上手的前端开发+项目上线体验
+
 ### 📀 视频学习
-
-https://www.apifox.cn/apidoc/shared-0e6ee326-d646-41bd-9214-29dbf47648fa/)
-
-https://gitee.com/Megasu/uniapp-shop-vue3-ts/)
 
 ### 项目架构
 
@@ -18,7 +16,7 @@ https://gitee.com/Megasu/uniapp-shop-vue3-ts/)
 
 ### 在线演示
 
-项目已上线，微信搜索小程序 **小兔鲜儿** 即可体验。
+项目目前尚未上线，微信搜索小程序 **健康宝** 即可体验。
 
 ### 项目截图
 
@@ -58,19 +56,19 @@ https://gitee.com/Megasu/uniapp-shop-vue3-ts/)
 - 项目起步
 - 首页模块
 - 推荐模块
-- 分类模块
+- 打卡模块
 - 详情模块
 - 登录模块
 - 用户模块
 - 地址模块
 - SKU 模块
-- 购物车模块
-- 订单模块
+- 医生问答模块
+- 健康自测模块
 - 项目打包
 
 ### 开发环境
 
-- Windows 版本： Windows 11 家庭中文版
+- Windows 版本： Windows 11 专业版
 - 开发工具： VS Code 、 HbuilderX 、 微信开发者工具
 - Node 版本： v16.15.0
 - pnpm 版本：v8.6.10
