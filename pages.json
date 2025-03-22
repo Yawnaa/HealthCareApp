@@ -4,15 +4,15 @@
 			"path": "pages/login/login",
 			"style": {
 				"navigationBarTitleText": "健康生活",
-				"navigationBarBackgroundColor": "#F5F9FF",
-				"navigationBarTextStyle": "black"
+				"navigationBarTextStyle": "white",
+				"navigationBarBackgroundColor": "#86a3ce"
 			}
 		},
 		{
 			"path": "pages/register/register",
 			"style": {
 				"navigationBarTitleText": "注册账号",
-				"navigationBarBackgroundColor": "#F5F9FF",
+				"navigationBarBackgroundColor": "#2e3744",
 				"navigationBarTextStyle": "black"
 			}
 		},
@@ -20,8 +20,8 @@
 			"path": "pages/index/index",
 			"style": {
 				"navigationBarTitleText": "健康打卡",
-				"navigationBarBackgroundColor": "#F5F9FF",
-				"navigationBarTextStyle": "black"
+				"navigationStyle": "custom", 
+				"navigationBarTextStyle": "white"
 			}
 		},
 		{

@@ -1,7 +1,8 @@
 @import "../../uvue.wxss";
 :host{display:flex;flex-direction:column}
 
-:root {
+/* 使用CSS变量定义主题颜色和尺寸 */
+page {
 	--primary-color: #4A90E2;
 	--primary-text: #333;
 	--secondary-text: #666;

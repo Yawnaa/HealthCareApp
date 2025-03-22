@@ -1,221 +1,150 @@
 @import "../../uvue.wxss";
 :host{display:flex;flex-direction:column}
 
-:root {
-	--primary-color: #4A90E2;
-	--primary-text: #333;
-	--secondary-text: #666;
-	--divider-color: #eee;
-	--active-bg: #f9f9f9;
-	--danger-color: #ff4d4f;
-	--border-radius: 16rpx;
-	--line-height: calc(1em + 8rpx);
-}
 .container {
 	min-height: 100vh;
-	background-color: #f5f5f5;
-	padding-bottom: calc(60rpx + env(safe-area-inset-bottom));
+	background: linear-gradient(180deg, #E6F3FF 0%, #F5F5F5 100%);
+	padding: 16px;
+	box-sizing: border-box;
 }
 
-/* 头部区域样式 */
-.header {
-	background-color: #fff;
-	padding: 40rpx 30rpx;
-	margin-bottom: 20rpx;
+/* 用户信息区域 */
+.user-info-section {
+	background: linear-gradient(135deg, #7BC6FF 0%, #4A90E2 100%);
+	padding: 24px;
+	border-radius: 16px;
+	box-shadow: 0 4px 12px rgba(74,144,226,0.3);
+	margin-bottom: 20px;
 }
 .user-info {
 	display: flex;
-	align-items: center;
+	align-items: flex-start;
+	justify-content: space-between;
+}
+.info-content {
+	flex: 1;
+	margin-right: 20px;
 }
 .avatar-section {
 	position: relative;
-	margin-right: 30rpx;
+	align-self: flex-start;
 }
 .avatar {
-	width: 120rpx;
-	height: 120rpx;
-	border-radius: 60rpx;
-	border: 4rpx solid var(--primary-color);
+	width: 80px;
+	height: 80px;
+	border-radius: 40px;
+	border: 3px solid rgba(255,255,255,0.8);
+	box-shadow: 0 2px 8px rgba(0,0,0,0.2);
 }
 .edit-avatar-hint {
 	position: absolute;
-	bottom: -30rpx;
-	left: 50%;
-	transform: translateX(-50%);
-	font-size: 24rpx;
-	color: var(--secondary-text);
-	white-space: nowrap;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background: rgba(0,0,0,0.5);
+	color: #FFFFFF;
+	font-size: 12px;
+	text-align: center;
+	padding: 4px 0;
+	border-bottom-left-radius: 40px;
+	border-bottom-right-radius: 40px;
 }
-.info-section {
-	flex: 1;
-}
-.name-row {
-	display: flex;
-	align-items: center;
-	margin-bottom: 10rpx;
-}
-.name {
-	font-size: 36rpx;
+.user-name {
+	font-size: 24px;
+	color: #FFFFFF;
 	font-weight: bold;
-	color: var(--primary-text);
-	margin-right: 20rpx;
+	margin-bottom: 12px;
+	display: block;
+	text-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
-.edit-icon {
-	font-size: 24rpx;
-	color: var(--primary-color);
-	padding: 4rpx 12rpx;
-	border: 1rpx solid var(--primary-color);
-	border-radius: 20rpx;
+.user-phone {
+	font-size: 16px;
+	color: rgba(255,255,255,0.9);
+	margin-bottom: 8px;
+	display: block;
 }
-.phone {
-	font-size: 28rpx;
-	color: var(--secondary-text);
-	margin-bottom: 10rpx;
+.doctor-info {
+	font-size: 14px;
+	color: rgba(255,255,255,0.9);
+	margin-bottom: 8px;
+	display: block;
 }
-.user-tags {
-	display: flex;
-	gap: 10rpx;
-}
-.tag {
-	font-size: 24rpx;
-	color: var(--primary-color);
-	background-color: rgba(74, 144, 226, 0.1);
-	padding: 4rpx 12rpx;
-	border-radius: 20rpx;
+.symptom-score {
+	font-size: 14px;
+	color: rgba(255,255,255,0.9);
+	display: block;
 }
 
-/* 健康数据概览 */
-.health-overview {
-	background-color: #fff;
-	padding: 30rpx;
-	margin-bottom: 20rpx;
-	display: flex;
-	justify-content: space-around;
-}
-.overview-item {
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-}
-.overview-item .value {
-	font-size: 40rpx;
-	font-weight: bold;
-	color: var(--primary-color);
-	margin-bottom: 8rpx;
-}
-.overview-item .label {
-	font-size: 24rpx;
-	color: var(--secondary-text);
-}
-
-/* 功能列表样式 */
+/* 功能列表 */
 .menu-list {
-	padding: 0 20rpx;
-}
-.menu-group {
-	background-color: #fff;
-	border-radius: var(--border-radius);
-	margin-bottom: 20rpx;
-	overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    background-color: #FFFFFF;
+    padding: 0 16px;
 }
 .menu-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 48px;
+    border-bottom: 1px solid #EEEEEE;
+}
+.menu-text {
+    font-size: 16px;
+    color: #000000;
+    text-align: left; /* 确保文字左对齐 */
+}
+.arrow {
+    font-size: 16px;
+    color: #CCCCCC;
+}
+.menu-item {
+	height: 60px;
+	padding: 0 20px;
 	display: flex;
 	align-items: center;
-	height: 100rpx;
-	padding: 0 30rpx;
-	border-bottom: 1rpx solid var(--divider-color);
-	position: relative;
-	will-change: transform;
+	justify-content: space-between;
+	border-bottom: 1px solidrgb(92, 38, 38);
+	transition: all 0.3s ease;
+}
+.menu-item:active {
+	background-color: #F5F5F5;
+	transform: scale(0.98);
 }
 .menu-item:last-child {
 	border-bottom: none;
 }
-.menu-icon {
-	width: 40rpx;
-	height: 40rpx;
-	margin-right: 20rpx;
-}
 .menu-text {
-	flex: 1;
-	font-size: 30rpx;
-	color: var(--primary-text);
+	font-size: 16px;
+	color: #333333;
+	font-weight: 500;
 }
 .arrow {
-	font-size: 30rpx;
-	color: var(--secondary-text);
-}
-.menu-item-active {
-	background-color: var(--active-bg);
-	transform: scale(0.98);
-	transition: transform 0.2s ease;
+	color: #CCCCCC;
+	font-size: 16px;
 }
 
-/* 退出按钮样式 */
-.logout-btn {
-	position: fixed;
-	bottom: 0;
-	left: 0;
-	right: 0;
-	height: 100rpx;
+/* 退出登录按钮 */
+.logout-section {
+	margin-top: 32px;
+	padding: 0 4px;
+}
+.logout-button {
+	width: 100%;
+	height: 52px;
+	background: linear-gradient(135deg, #FF4D4F 0%, #FF7875 100%);
+	color: #FFFFFF;
+	font-size: 16px;
+	font-weight: 500;
+	border-radius: 26px;
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	background-color: #fff;
-	padding-bottom: env(safe-area-inset-bottom);
-	will-change: opacity;
+	border: none;
+	box-shadow: 0 4px 12px rgba(255,77,79,0.2);
+	transition: all 0.3s ease;
 }
-.logout-text {
-	font-size: 32rpx;
-	color: var(--danger-color);
-}
-
-/* 骨架屏样式 */
-.skeleton-header {
-	display: flex;
-	align-items: center;
-}
-.skeleton-avatar {
-	width: 120rpx;
-	height: 120rpx;
-	border-radius: 60rpx;
-	background: #f0f0f0;
-	margin-right: 30rpx;
-	animation: skeleton-loading 1.4s infinite;
-}
-.skeleton-info {
-	flex: 1;
-}
-.skeleton-name {
-	width: 200rpx;
-	height: 36rpx;
-	background: #f0f0f0;
-	border-radius: 4rpx;
-	margin-bottom: 20rpx;
-	animation: skeleton-loading 1.4s infinite;
-}
-.skeleton-phone {
-	width: 300rpx;
-	height: 28rpx;
-	background: #f0f0f0;
-	border-radius: 4rpx;
-	animation: skeleton-loading 1.4s infinite;
-}
-.skeleton-menu {
-	padding: 20rpx;
-}
-.skeleton-item {
-	width: 100%;
-	height: 100rpx;
-	background: #f0f0f0;
-	border-radius: 4rpx;
-	margin-bottom: 20rpx;
-	animation: skeleton-loading 1.4s infinite;
-}
-@keyframes skeleton-loading {
-0% {
-		background-position: 100% 50%;
-}
-100% {
-		background-position: 0 50%;
-}
+.logout-button:active {
+	transform: scale(0.98);
+	opacity: 0.9;
 }

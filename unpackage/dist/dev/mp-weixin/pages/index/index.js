@@ -1,6 +1,10 @@
 "use strict";
 const common_vendor = require("../../common/vendor.js");
 const common_assets = require("../../common/assets.js");
+if (!Math) {
+  common_vendor.unref(CustomNavbar)();
+}
+const CustomNavbar = () => "../../components/CustomNavbar/CustomNavbar.js";
 const _sfc_main = /* @__PURE__ */ common_vendor.defineComponent(new UTSJSONObject({
   __name: "index",
   setup(__props) {
@@ -89,7 +93,7 @@ const _sfc_main = /* @__PURE__ */ common_vendor.defineComponent(new UTSJSONObjec
       common_vendor.index.navigateTo({
         url: "/pages/exercise/exercise",
         fail: (err) => {
-          common_vendor.index.__f__("error", "at pages/index/index.uvue:199", "跳转失败：", err);
+          common_vendor.index.__f__("error", "at pages/index/index.uvue:206", "跳转失败：", err);
           common_vendor.index.showToast({
             title: "页面跳转失败",
             icon: "none"
@@ -101,7 +105,7 @@ const _sfc_main = /* @__PURE__ */ common_vendor.defineComponent(new UTSJSONObjec
       common_vendor.index.navigateTo({
         url: "/pages/ai-doctor/ai-doctor",
         fail: (err) => {
-          common_vendor.index.__f__("error", "at pages/index/index.uvue:212", "跳转失败：", err);
+          common_vendor.index.__f__("error", "at pages/index/index.uvue:219", "跳转失败：", err);
           common_vendor.index.showToast({
             title: "页面跳转失败",
             icon: "none"
@@ -111,22 +115,25 @@ const _sfc_main = /* @__PURE__ */ common_vendor.defineComponent(new UTSJSONObjec
     };
     return (_ctx = null, _cache = null) => {
       const __returned__ = {
-        a: common_vendor.t(totalDays.value),
-        b: common_vendor.t(continuousDays.value),
-        c: common_vendor.t(monthDays.value),
-        d: common_vendor.t(exerciseScore.value),
-        e: common_vendor.o(navigateToExercise),
-        f: common_assets._imports_0,
-        g: common_vendor.o(navigateToAIDoctor),
-        h: common_vendor.o(prevMonth),
-        i: common_vendor.o(nextMonth),
-        j: common_vendor.f(weekdays, (day = null, k0 = null, i0 = null) => {
+        a: common_vendor.p({
+          title: "首页"
+        }),
+        b: common_vendor.t(totalDays.value),
+        c: common_vendor.t(continuousDays.value),
+        d: common_vendor.t(monthDays.value),
+        e: common_vendor.t(exerciseScore.value),
+        f: common_vendor.o(navigateToExercise),
+        g: common_assets._imports_0$1,
+        h: common_vendor.o(navigateToAIDoctor),
+        i: common_vendor.o(prevMonth),
+        j: common_vendor.o(nextMonth),
+        k: common_vendor.f(weekdays, (day = null, k0 = null, i0 = null) => {
           return {
             a: common_vendor.t(day),
             b: day
           };
         }),
-        k: common_vendor.f(calendarDays.value, (day = null, k0 = null, i0 = null) => {
+        l: common_vendor.f(calendarDays.value, (day = null, k0 = null, i0 = null) => {
           return {
             a: common_vendor.t(day.day),
             b: day.date,
@@ -139,7 +146,7 @@ const _sfc_main = /* @__PURE__ */ common_vendor.defineComponent(new UTSJSONObjec
             }, day.date)
           };
         }),
-        l: common_vendor.f(checkItems.value, (item = null, index = null, i0 = null) => {
+        m: common_vendor.f(checkItems.value, (item = null, index = null, i0 = null) => {
           return {
             a: item.icon,
             b: common_vendor.t(item.label),
@@ -151,7 +158,7 @@ const _sfc_main = /* @__PURE__ */ common_vendor.defineComponent(new UTSJSONObjec
             }, index)
           };
         }),
-        m: common_vendor.sei(common_vendor.gei(_ctx, ""), "view")
+        n: common_vendor.sei(common_vendor.gei(_ctx, ""), "view")
       };
       return __returned__;
     };

@@ -1,372 +1,395 @@
 <template>
-	<view class="container">
-		<!-- 顶部健康生活图标 -->
-		<view class="header">
-			<image src="/static/icons/health-life.png" class="logo" @error="handleImageError"></image>
-			<text class="title">健康生活</text>
-			<text class="subtitle">让每一天都充满活力</text>
+	<view class="viewport">
+		<view class="logo">
+			<image src="/static/images/logo.png"></image>
 		</view>
+		<view class="login">
+			<!-- 账号密码登录表单 -->
+			<view class="form">
+				<input v-model="form.account" class="input" type="text" placeholder="请输入用户名/手机号码" />
+				<input v-model="form.password" class="input" type="password" password placeholder="请输入密码" />
+				<button @tap="onSubmit" class="button phone">账号密码登录</button>
+			</view>
 
-		<!-- 登录表单 -->
-		<view class="login-form">
-			<view class="form-item">
-				<text class="iconfont icon-user"></text>
-				<input type="text" v-model="username" placeholder="请输入用户名" class="input" />
-			</view>
-			<view class="form-item">
-				<text class="iconfont icon-lock"></text>
-				<input type="password" v-model="password" placeholder="请输入密码" class="input" />
-			</view>
-			<button class="login-btn" @click="handleLogin">登录</button>
-			
-			<!-- 第三方登录 -->
-			<view class="third-party-login">
-				<view class="divider">
-					<text class="divider-text">其他登录方式</text>
+			<view class="extra">
+				<view class="caption">
+					<text>其他登录方式</text>
 				</view>
-				<view class="login-methods">
-					<view class="method-item" @click="handleWechatLogin">
-						<image src="/static/icons/wechat.png" class="method-icon" @error="handleImageError"></image>
-						<text>微信登录</text>
-					</view>
-					<view class="method-item" @click="handleQQLogin">
-						<image src="/static/icons/qq.png" class="method-icon" @error="handleImageError"></image>
-						<text>QQ登录</text>
-					</view>
-					<view class="method-item" @click="handlePhoneLogin">
-						<image src="/static/icons/phone.png" class="method-icon" @error="handleImageError"></image>
-						<text>手机号登录</text>
-					</view>
+				<view class="options">
+					<!-- 手机号快捷登录 -->
+					<button @tap="onGetphonenumberSimple" class="login-option">
+						<text class="icon icon-phone">手机号快捷登录</text>
+					</button>
+					<!-- 微信登录 -->
+					<button class="login-option">
+						<text class="icon icon-weixin">微信登录</text>
+					</button>
 				</view>
 			</view>
-			
-			<!-- 健康生活小贴士 -->
-			<view class="health-tips">
-				<view class="tip-item">
-					<text class="tip-icon">🌱</text>
-					<text class="tip-text">每天喝够8杯水</text>
-				</view>
-				<view class="tip-item">
-					<text class="tip-icon">🏃</text>
-					<text class="tip-text">保持规律运动</text>
-				</view>
-				<view class="tip-item">
-					<text class="tip-icon">😴</text>
-					<text class="tip-text">保证充足睡眠</text>
-				</view>
-			</view>
-		</view>
-
-		<!-- 底部注册链接 -->
-		<view class="footer">
-			<text class="register-link" @click="navigateToRegister">还没有账号？立即注册</text>
 		</view>
 	</view>
 </template>
 
 <script setup lang="uts">
-import { ref, onMounted } from 'vue'
+import { postLoginAPI, postLoginWxMinAPI, postLoginWxMinSimpleAPI } from '../../services/login'
+import { useMemberStore } from '../../stores'
+import type { LoginResult } from '../../types/member'
+import { onLoad } from '@dcloudio/uni-app'
+import { ref } from 'vue'
 
-const username = ref('')
-const password = ref('')
-
-// 图片加载错误处理
-const handleImageError = (e: any) => {
-	console.error('图片加载失败：', e)
-	uni.showToast({
-		title: '图片加载失败',
-		icon: 'none'
-	})
-}
-
-// 页面加载完成
-onMounted(() => {
-	console.log('登录页面加载完成')
+// #ifdef MP-WEIXIN
+// 获取 code 登录凭证
+let code = ''
+onLoad(async () => {
+	const res = await wx.login()
+	code = res.code
 })
 
-// 账号密码登录
-const handleLogin = () => {
-	if (!username.value || !password.value) {
-		uni.showToast({
-			title: '请输入用户名和密码',
-			icon: 'none'
+// 获取用户手机号码
+const onGetphonenumber: UniHelper.ButtonOnGetphonenumber = async (ev) => {
+	await checkedAgreePrivacy()
+	const { encryptedData, iv } = ev.detail
+	const res = await postLoginWxMinAPI({ code, encryptedData, iv })
+	loginSuccess(res.result)
+}
+// #endif
+
+// 表单数据
+const form = ref({
+	account: '',
+	password: ''
+})
+
+// 表单提交
+const onSubmit = async () => {
+	try {
+		// 表单验证
+		if (!form.value.account || !form.value.password) {
+			uni.showToast({
+				icon: 'none',
+				title: '请输入账号和密码'
+			})
+			return
+		}
+		
+		console.log('开始登录...')
+		
+		// 直接登录成功
+		const profile: LoginResult = {
+			id: '1',
+			account: form.value.account,
+			avatar: '/static/images/avatar.png',
+			nickname: '测试用户',
+			gender: 1,
+			birthday: '1990-01-01',
+			cityCode: '110100',
+			provinceCode: '110000',
+			profession: '工程师'
+		}
+		
+		console.log('创建用户信息成功:', profile)
+		
+		// 保存会员信息
+		const memberStore = useMemberStore()
+		memberStore.setProfile(profile)
+		
+		console.log('保存用户信息成功')
+		
+		// 成功提示
+		uni.showToast({ icon: 'success', title: '登录成功' })
+		
+		console.log('准备跳转到首页...')
+		
+		// 直接跳转
+		uni.switchTab({
+			url: '/pages/index/index',
+			success: () => {
+				console.log('跳转成功')
+			},
+			fail: (err) => {
+				console.error('跳转失败:', err)
+			}
 		})
-		return
+	} catch (error) {
+		console.error('登录过程出错:', error)
+		uni.showToast({
+			icon: 'none',
+			title: '登录失败，请重试'
+		})
+	}
+}
+
+// 模拟手机号码快捷登录（开发练习）
+const onGetphonenumberSimple = async () => {
+	// 直接登录成功
+	const profile: LoginResult = {
+		id: '1',
+		account: '13123456789',
+		avatar: '/static/images/avatar.png',
+		nickname: '测试用户',
+		gender: 1,
+		birthday: '1990-01-01',
+		cityCode: '110100',
+		provinceCode: '110000',
+		profession: '工程师'
 	}
 	
-	console.log('开始登录...')
-	uni.showLoading({
-		title: '登录中...'
-	})
+	// 保存会员信息
+	const memberStore = useMemberStore()
+	memberStore.setProfile(profile)
 	
-	setTimeout(() => {
-		uni.hideLoading()
-		console.log('登录成功，跳转到首页')
-		uni.switchTab({
-			url: '/pages/index/index',
-			fail: (err) => {
-				console.error('跳转失败：', err)
-				uni.showToast({
-					title: '页面跳转失败，请重试',
-					icon: 'none',
-					duration: 2000
-				})
-			},
-			success: () => {
-				console.log('跳转成功')
-			}
-		})
-	}, 1500)
+	// 成功提示
+	uni.showToast({ icon: 'success', title: '登录成功' })
+	
+	// 直接跳转
+	uni.switchTab({
+		url: '/pages/index/index'
+	})
 }
 
-// 微信登录
-const handleWechatLogin = () => {
-	console.log('开始微信登录...')
-	uni.showLoading({
-		title: '微信登录中...'
-	})
-	
-	setTimeout(() => {
-		uni.hideLoading()
-		console.log('微信登录成功')
-		uni.switchTab({
-			url: '/pages/index/index',
-			fail: (err) => {
-				console.error('跳转失败：', err)
-				uni.showToast({
-					title: '页面跳转失败，请重试',
-					icon: 'none',
-					duration: 2000
-				})
-			},
-			success: () => {
-				console.log('跳转成功')
-			}
+// 请先阅读并勾选协议
+const isAgreePrivacy = ref(false)
+const isAgreePrivacyShakeY = ref(false)
+const checkedAgreePrivacy = async () => {
+	if (!isAgreePrivacy.value) {
+		uni.showToast({
+			icon: 'none',
+			title: '请先阅读并勾选协议',
 		})
-	}, 1500)
+		// 震动提示
+		isAgreePrivacyShakeY.value = true
+		setTimeout(() => {
+			isAgreePrivacyShakeY.value = false
+		}, 500)
+		// 返回错误
+		return Promise.reject(new Error('请先阅读并勾选协议'))
+	}
 }
 
-// QQ登录
-const handleQQLogin = () => {
-	console.log('开始QQ登录...')
-	uni.showLoading({
-		title: 'QQ登录中...'
-	})
-	
-	setTimeout(() => {
-		uni.hideLoading()
-		console.log('QQ登录成功')
-		uni.switchTab({
-			url: '/pages/index/index',
-			fail: (err) => {
-				console.error('跳转失败：', err)
-				uni.showToast({
-					title: '页面跳转失败，请重试',
-					icon: 'none',
-					duration: 2000
-				})
-			},
-			success: () => {
-				console.log('跳转成功')
-			}
-		})
-	}, 1500)
-}
-
-// 手机号登录
-const handlePhoneLogin = () => {
-	console.log('开始手机号登录...')
-	uni.showLoading({
-		title: '手机号登录中...'
-	})
-	
-	setTimeout(() => {
-		uni.hideLoading()
-		console.log('手机号登录成功')
-		uni.switchTab({
-			url: '/pages/index/index',
-			fail: (err) => {
-				console.error('跳转失败：', err)
-				uni.showToast({
-					title: '页面跳转失败，请重试',
-					icon: 'none',
-					duration: 2000
-				})
-			},
-			success: () => {
-				console.log('跳转成功')
-			}
-		})
-	}, 1500)
-}
-
-// 跳转到注册页面
-const navigateToRegister = () => {
-	console.log('跳转到注册页面')
-	uni.navigateTo({
-		url: '/pages/register/register',
-		fail: (err) => {
-			console.error('跳转失败：', err)
-			uni.showToast({
-				title: '页面跳转失败',
-				icon: 'none'
-			})
-		}
-	})
+const onOpenPrivacyContract = () => {
+	// #ifdef MP-WEIXIN
+	// 跳转至隐私协议页面
+	wx.openPrivacyContract({})
+	// #endif
 }
 </script>
 
 <style>
-.container {
-	min-height: 100vh;
-	background-color: #F5F9FF;
-	padding: 60rpx 40rpx;
-	display: flex;
-	flex-direction: column;
+page {
+	height: 100%;
+	background: linear-gradient(135deg, rgba(74, 144, 226, 0.2) 0%, rgba(74, 144, 226, 0.1) 100%);
 }
 
-.header {
+.viewport {
 	display: flex;
 	flex-direction: column;
-	align-items: center;
-	margin-bottom: 80rpx;
+	height: 100%;
+	padding: 20rpx 40rpx;
+	background: rgba(255, 255, 255, 0.6);
 }
 
 .logo {
-	width: 160rpx;
-	height: 160rpx;
-	margin-bottom: 30rpx;
-}
-
-.title {
-	font-size: 48rpx;
-	font-weight: bold;
-	color: #4A90E2;
-	margin-bottom: 16rpx;
-}
-
-.subtitle {
-	font-size: 28rpx;
-	color: #666;
-}
-
-.login-form {
-	background-color: #fff;
-	border-radius: 24rpx;
-	padding: 40rpx;
-	box-shadow: 0 4rpx 16rpx rgba(74, 144, 226, 0.1);
-}
-
-.form-item {
-	display: flex;
-	align-items: center;
-	background-color: #f8f8f8;
-	border-radius: 12rpx;
-	padding: 20rpx;
-	margin-bottom: 30rpx;
-}
-
-.iconfont {
-	font-size: 40rpx;
-	color: #4A90E2;
-	margin-right: 20rpx;
-}
-
-.input {
 	flex: 1;
-	font-size: 28rpx;
-}
-
-.login-btn {
-	width: 100%;
-	height: 88rpx;
-	background-color: #4A90E2;
-	color: #fff;
-	font-size: 32rpx;
-	border-radius: 44rpx;
+	text-align: center;
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	margin-top: 60rpx;
 }
 
-.third-party-login {
-	margin-top: 60rpx;
+.logo image {
+	width: 400rpx;
+	height: 400rpx;
+	margin-top: 5vh;
 }
 
-.divider {
+.login {
 	display: flex;
-	align-items: center;
+	flex-direction: column;
+	height: 60vh;
+	padding: 40rpx 20rpx 20rpx;
+}
+
+.form {
 	margin-bottom: 40rpx;
 }
 
-.divider::before,
-.divider::after {
-	content: '';
-	flex: 1;
-	height: 1rpx;
-	background-color: #eee;
-}
-
-.divider-text {
-	padding: 0 20rpx;
-	font-size: 24rpx;
-	color: #999;
-}
-
-.login-methods {
-	display: flex;
-	justify-content: space-around;
-	padding: 0 40rpx;
-}
-
-.method-item {
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-}
-
-.method-icon {
-	width: 80rpx;
+.input {
+	width: 100%;
 	height: 80rpx;
-	margin-bottom: 10rpx;
-}
-
-.method-item text {
-	font-size: 24rpx;
-	color: #666;
-}
-
-.health-tips {
-	margin-top: 60rpx;
-	padding-top: 40rpx;
-	border-top: 1rpx solid #f0f0f0;
-}
-
-.tip-item {
-	display: flex;
-	align-items: center;
+	font-size: 28rpx;
+	border-radius: 72rpx;
+	border: 1px solid #ddd;
+	padding-left: 30rpx;
 	margin-bottom: 20rpx;
 }
 
-.tip-icon {
-	font-size: 40rpx;
-	margin-right: 20rpx;
-}
-
-.tip-text {
-	font-size: 26rpx;
-	color: #666;
-}
-
-.footer {
-	margin-top: auto;
-	padding: 40rpx 0;
-	text-align: center;
-}
-
-.register-link {
+.button {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 100%;
+	height: 80rpx;
 	font-size: 28rpx;
+	border-radius: 72rpx;
+	color: #fff;
+	background-color: #4A90E2;
+}
+
+.button .icon {
+	font-size: 40rpx;
+	margin-right: 6rpx;
+}
+
+.phone {
+	background-color: #4A90E2;
+}
+
+.wechat {
+	background-color: #06c05f;
+}
+
+.extra {
+	flex: 1;
+	padding: 70rpx 70rpx 0;
+}
+
+.extra .caption {
+	width: 440rpx;
+	line-height: 1;
+	border-top: 1rpx solid #ddd;
+	font-size: 26rpx;
+	color: #999;
+	position: relative;
+}
+
+.extra .caption text {
+	transform: translate(-40%);
+	background-color: #fff;
+	position: absolute;
+	top: -12rpx;
+	left: 50%;
+}
+
+.extra .options {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	margin-top: 70rpx;
+	gap: 40rpx;
+}
+
+.login-option {
+	padding: 0;
+	background-color: transparent;
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: center;
+	gap: 10rpx;
+}
+
+.login-option::after {
+	border: none;
+}
+
+.login-option .icon {
+	font-size: 24rpx;
+	color: #444;
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+}
+
+.login-option .icon::before {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 60rpx;
+	height: 60rpx;
+	font-size: 40rpx;
+	border: 1rpx solid #444;
+	border-radius: 50%;
+}
+
+.login-option .icon-weixin::before {
+	border-color: #06c05f;
+	color: #06c05f;
+}
+
+@keyframes animate__shakeY {
+	0% {
+		transform: translate(0, 0);
+	}
+	50% {
+		transform: translate(0, -5rpx);
+	}
+	100% {
+		transform: translate(0, 0);
+	}
+}
+
+.animate__shakeY {
+	animation: animate__shakeY 0.2s ease-in-out 3;
+}
+
+.button-privacy-wrap {
+	position: relative;
+	display: flex;
+	align-items: center;
+}
+
+.button-privacy-wrap .button-opacity {
+	opacity: 0;
+	position: absolute;
+	z-index: 1;
+	right: 0;
+}
+
+.tips {
+	position: absolute;
+	bottom: 80rpx;
+	left: 20rpx;
+	right: 20rpx;
+	font-size: 22rpx;
+	color: #999;
+	display: flex;
+	align-items: center;
+	gap: 20rpx;
+}
+
+.privacy-content {
+	display: flex;
+	align-items: center;
+	gap: 4rpx;
+	flex: 1;
+}
+
+.tips .label {
+	display: flex;
+	align-items: center;
+	gap: 4rpx;
+}
+
+.tips .radio {
+	transform: scale(0.6);
+	margin-right: -4rpx;
+	margin-top: -4rpx;
+	vertical-align: middle;
+}
+
+.tips .link {
+	display: inline;
 	color: #4A90E2;
+}
+
+.privacy-button {
+	width: auto;
+	padding: 0 20rpx;
+	font-size: 22rpx;
+	height: 40rpx;
+	line-height: 40rpx;
+	background-color: transparent;
+	color: #999;
+	white-space: nowrap;
 }
 </style> 

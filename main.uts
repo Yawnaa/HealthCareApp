@@ -1,20 +1,12 @@
-<<<<<<< HEAD
 import App from './App.uvue'
-
 import { createSSRApp } from 'vue'
+import { createPinia } from 'pinia'
+
 export function createApp() {
 	const app = createSSRApp(App)
+	const pinia = createPinia()
+	app.use(pinia)
 	return {
 		app
 	}
-=======
-import App from './App.uvue'
-
-import { createSSRApp } from 'vue'
-export function createApp() {
-	const app = createSSRApp(App)
-	return {
-		app
-	}
->>>>>>> a673eed6f587a92e71200540c14c3c62dd06cbc5
 }

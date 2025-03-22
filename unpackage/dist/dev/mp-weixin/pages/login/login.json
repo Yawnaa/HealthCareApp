@@ -1,6 +1,7 @@
 {
   "navigationBarTitleText": "健康生活",
-  "navigationBarBackgroundColor": "#F5F9FF",
-  "navigationBarTextStyle": "black",
+  "navigationStyle": "custom",
+  "navigationBarTextStyle": "white",
+  "navigationBarBackgroundColor": "#86a3ce",
   "usingComponents": {}
 }

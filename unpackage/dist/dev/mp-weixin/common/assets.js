@@ -1,20 +1,6 @@
 "use strict";
+const _imports_0$1 = "/static/images/logo.png";
 const _imports_0 = "/static/icons/health-life.png";
-const _imports_1$1 = "/static/icons/wechat.png";
-const _imports_2$1 = "/static/icons/qq.png";
-const _imports_3$1 = "/static/icons/phone.png";
-const _imports_1 = "/static/icons/medical-records.png";
-const _imports_2 = "/static/icons/prescriptions.png";
-const _imports_3 = "/static/icons/settings.png";
-const _imports_4 = "/static/icons/about.png";
-const _imports_5 = "/static/icons/feedback.png";
-exports._imports_0 = _imports_0;
-exports._imports_1 = _imports_1$1;
-exports._imports_1$1 = _imports_1;
-exports._imports_2 = _imports_2$1;
-exports._imports_2$1 = _imports_2;
-exports._imports_3 = _imports_3$1;
-exports._imports_3$1 = _imports_3;
-exports._imports_4 = _imports_4;
-exports._imports_5 = _imports_5;
+exports._imports_0 = _imports_0$1;
+exports._imports_0$1 = _imports_0;
 //# sourceMappingURL=../../.sourcemap/mp-weixin/common/assets.js.map

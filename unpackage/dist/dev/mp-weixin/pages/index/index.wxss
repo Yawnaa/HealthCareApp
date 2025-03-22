@@ -2,9 +2,13 @@
 :host{display:flex;flex-direction:column}
 
 .container {
-	padding: 30rpx;
-	background-color: #F5F9FF;
 	min-height: 100vh;
+	background: linear-gradient(180deg, #E6F3FF 0%, #F5F5F5 100%);
+	box-sizing: border-box;
+}
+.content {
+	padding: 16px;
+	margin-top: calc(88px + env(safe-area-inset-top));
 }
 .header {
 	margin-bottom: 30rpx;

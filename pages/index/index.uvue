@@ -1,81 +1,90 @@
 <template>
 	<view class="container">
-		<!-- 顶部标题 -->
-		<view class="header">
-			<text class="title">健康打卡</text>
-			<text class="subtitle">记录每一天的健康生活</text>
-		</view>
-
-		<!-- 天数统计卡片 -->
-		<view class="stats-card">
-			<view class="stats-item">
-				<text class="stats-num">{{ totalDays }}</text>
-				<text class="stats-label">累计打卡</text>
-			</view>
-			<view class="stats-item">
-				<text class="stats-num">{{ continuousDays }}</text>
-				<text class="stats-label">连续打卡</text>
-			</view>
-			<view class="stats-item">
-				<text class="stats-num">{{ monthDays }}</text>
-				<text class="stats-label">本月打卡</text>
-			</view>
-		</view>
-
-		<!-- 饮食运动数据 -->
-		<view class="data-section">
-			<view class="data-card" @click="navigateToExercise">
-				<text class="data-title">运动记录</text>
-				<view class="data-content">
-					<text class="data-value">{{ exerciseScore }}</text>
-					<text class="data-unit">分</text>
+		<!-- 使用自定义导航栏 -->
+		<CustomNavbar title="首页" />
+		
+		<!-- 页面内容 -->
+		<view class="content">
+			<!-- 顶部标题和Logo -->
+			<view class="header">
+				<image src="/static/logo.png" class="logo" mode="aspectFit"></image>
+				<view class="title-container">
+					<text class="title">健康打卡</text>
+					<text class="subtitle">记录每一天的健康生活</text>
 				</view>
 			</view>
-			<view class="data-card" @click="navigateToAIDoctor">
-				<text class="data-title">AI医生</text>
-				<view class="data-content">
-					<image src="/static/icons/health-life.png" class="icon"></image>
-					<text class="data-unit">问答</text>
+
+			<!-- 天数统计卡片 -->
+			<view class="stats-card">
+				<view class="stats-item">
+					<text class="stats-num">{{ totalDays }}</text>
+					<text class="stats-label">累计打卡</text>
+				</view>
+				<view class="stats-item">
+					<text class="stats-num">{{ continuousDays }}</text>
+					<text class="stats-label">连续打卡</text>
+				</view>
+				<view class="stats-item">
+					<text class="stats-num">{{ monthDays }}</text>
+					<text class="stats-label">本月打卡</text>
 				</view>
 			</view>
-		</view>
 
-		<!-- 日历表格 -->
-		<view class="calendar-section">
-			<view class="calendar-header">
-				<text class="calendar-title">日历</text>
-				<view class="calendar-nav">
-					<view class="calendar-nav-btn" @click="prevMonth">
-						<text class="calendar-nav-icon">&#xe615;</text>
+			<!-- 饮食运动数据 -->
+			<view class="data-section">
+				<view class="data-card" @click="navigateToExercise">
+					<text class="data-title">运动记录</text>
+					<view class="data-content">
+						<text class="data-value">{{ exerciseScore }}</text>
+						<text class="data-unit">分</text>
 					</view>
-					<view class="calendar-nav-btn" @click="nextMonth">
-						<text class="calendar-nav-icon">&#xe614;</text>
+				</view>
+				<view class="data-card" @click="navigateToAIDoctor">
+					<text class="data-title">AI医生</text>
+					<view class="data-content">
+						<image src="/static/icons/health-life.png" class="icon"></image>
+						<text class="data-unit">问答</text>
 					</view>
 				</view>
 			</view>
-			<view class="calendar-weeks">
-				<view class="weekday" v-for="day in weekdays" :key="day">{{ day }}</view>
-			</view>
-			<view class="calendar-days">
-				<view class="day-item" v-for="day in calendarDays" :key="day.date"
-						:class="{'weekend': day.isWeekend, 'other-month': day.isOtherMonth, 'today': day.isToday, 'checked': day.checked}"
-						@click="toggleCheck(day.date)">
-					{{ day.day }}
+
+			<!-- 日历表格 -->
+			<view class="calendar-section">
+				<view class="calendar-header">
+					<text class="calendar-title">日历</text>
+					<view class="calendar-nav">
+						<view class="calendar-nav-btn" @click="prevMonth">
+							<text class="calendar-nav-icon">&#xe615;</text>
+						</view>
+						<view class="calendar-nav-btn" @click="nextMonth">
+							<text class="calendar-nav-icon">&#xe614;</text>
+						</view>
+					</view>
+				</view>
+				<view class="calendar-weeks">
+					<view class="weekday" v-for="day in weekdays" :key="day">{{ day }}</view>
+				</view>
+				<view class="calendar-days">
+					<view class="day-item" v-for="day in calendarDays" :key="day.date"
+							:class="{'weekend': day.isWeekend, 'other-month': day.isOtherMonth, 'today': day.isToday, 'checked': day.checked}"
+							@click="toggleCheck(day.date)">
+						{{ day.day }}
+					</view>
 				</view>
 			</view>
-		</view>
 
-		<!-- 今日打卡 -->
-		<view class="today-check">
-			<view class="check-title">今日打卡</view>
-			<view class="check-grid">
-				<view class="check-item" v-for="(item, index) in checkItems" :key="index"
-						@click="toggleCheckItem(index)">
-					<image :src="item.icon" class="check-icon"></image>
-					<text class="check-label">{{ item.label }}</text>
-					<text class="check-status" :class="item.checked ? 'checked' : ''">
-						{{ item.checked ? '已完成' : '未完成' }}
-					</text>
+			<!-- 今日打卡 -->
+			<view class="today-check">
+				<view class="check-title">今日打卡</view>
+				<view class="check-grid">
+					<view class="check-item" v-for="(item, index) in checkItems" :key="index"
+							@click="toggleCheckItem(index)">
+						<image :src="item.icon" class="check-icon"></image>
+						<text class="check-label">{{ item.label }}</text>
+						<text class="check-status" :class="item.checked ? 'checked' : ''">
+							{{ item.checked ? '已完成' : '未完成' }}
+						</text>
+					</view>
 				</view>
 			</view>
 		</view>
@@ -83,7 +92,33 @@
 </template>
 
 <script setup lang="uts">
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted, onLoad } from 'vue'
+import CustomNavbar from '../../components/CustomNavbar/CustomNavbar.vue'
+import { useMemberStore } from '../../stores'
+
+// 获取用户信息
+const memberStore = useMemberStore()
+
+// 检查登录状态
+onLoad(() => {
+	console.log('页面加载，检查登录状态')
+	console.log('当前用户信息：', memberStore.profile)
+	
+	if (!memberStore.profile) {
+		console.log('未登录，跳转到登录页面')
+		uni.reLaunch({
+			url: '/pages/login/login',
+			success: () => {
+				console.log('跳转成功')
+			},
+			fail: (err) => {
+				console.error('跳转失败：', err)
+			}
+		})
+	} else {
+		console.log('已登录，用户信息：', memberStore.profile)
+	}
+})
 
 // 统计数据
 const totalDays = ref(128)
@@ -221,14 +256,31 @@ const navigateToAIDoctor = () => {
 
 <style>
 .container {
-	padding: 30rpx;
-	background-color: #F5F9FF;
 	min-height: 100vh;
+	background: linear-gradient(180deg, #E6F3FF 0%, #F5F5F5 100%);
+	box-sizing: border-box;
+}
+
+.content {
+	padding: 16px;
+	margin-top: calc(88px + env(safe-area-inset-top));
 }
 
 .header {
 	margin-bottom: 30rpx;
 	padding: 20rpx 0;
+	display: flex;
+	align-items: center;
+}
+
+.logo {
+	width: 120rpx;
+	height: 120rpx;
+	margin-right: 20rpx;
+}
+
+.title-container {
+	flex: 1;
 }
 
 .title {

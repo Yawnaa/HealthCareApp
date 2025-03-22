@@ -27,6 +27,8 @@ const _sfc_main = common_vendor.defineComponent(new UTSJSONObject({
 }));
 function createApp() {
   const app = common_vendor.createSSRApp(_sfc_main);
+  const pinia = common_vendor.createPinia();
+  app.use(pinia);
   return {
     app
   };

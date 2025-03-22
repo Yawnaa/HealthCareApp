@@ -1,0 +1,46 @@
+<template>
+	<view class="custom-nav">
+		<view class="nav-content">
+			<text class="nav-title">{{ title }}</text>
+		</view>
+	</view>
+</template>
+
+<script>
+export default {
+	name: 'CustomNavbar',
+	props: {
+		title: {
+			type: String,
+			default: '标题'
+		}
+	}
+}
+</script>
+
+<style>
+.custom-nav {
+	background: linear-gradient(135deg, #FFE5E5 0%, #FFB6C1 100%);
+	height: 88px;
+	width: 100%;
+	position: fixed;
+	top: 0;
+	left: 0;
+	z-index: 100;
+	box-shadow: 0 2px 8px rgba(255,182,193,0.3);
+}
+
+.nav-content {
+	height: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding-top: env(safe-area-inset-top);
+}
+
+.nav-title {
+	font-size: 18px;
+	color: #333333;
+	font-weight: 500;
+}
+</style> 
