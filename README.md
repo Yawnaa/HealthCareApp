@@ -112,11 +112,12 @@ npm run dev:h5
 │   ├── pages                  # 主包页面
 │       ├── index               # 首页
 │       ├── category            # 分类页
-│       ├── cart                # 购物车
+│       ├── cart                # ai问答
 │       ├── my                  # 我的
 │       ├── goods               # 商品详情
-│       └── hot                 # 热门推荐
+│       └── check-in            # 健康打卡
 │       └── login               # 登录页
+│       └── test                # 健康自测
 │   ├── pagesMember            # 分包页面(用户模块)
 │       ├── address             # 地址管理
 │       ├── address-form        # 地址表单
